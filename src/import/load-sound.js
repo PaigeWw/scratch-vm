@@ -33,8 +33,9 @@ const loadSound = function (sound, runtime) {
                 {data: soundAsset.data}
             ));
         })
-        .then(() => sound,function(){
-            console.log('----vm:loadSound.js调用 decodeSound失败---');
+        .then(soundId => {
+            sound.soundId = soundId;
+            return sound;
         });
 };
 

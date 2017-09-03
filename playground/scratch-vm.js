@@ -8760,10 +8760,9 @@ var loadSound = function loadSound(sound, runtime) {
         sound.assetId = soundAsset.assetId;
         sound.dataFormat = ext;
         return runtime.audioEngine.decodeSound(Object.assign({}, sound, { data: soundAsset.data }));
-    }).then(function () {
+    }).then(function (soundId) {
+        sound.soundId = soundId;
         return sound;
-    }, function () {
-        console.log('----vm:loadSound.js调用 decodeSound失败---');
     });
 };
 
@@ -22921,9 +22920,9 @@ var Scratch3SoundBlocks = function () {
         value: function playSound(args, util) {
             var index = this._getSoundIndex(args.SOUND_MENU, util);
             if (index >= 0) {
-                var md5 = util.target.sprite.sounds[index].md5;
+                var soundId = util.target.sprite.sounds[index].soundId;
                 if (util.target.audioPlayer === null) return;
-                util.target.audioPlayer.playSound(md5);
+                util.target.audioPlayer.playSound(soundId);
             }
         }
     }, {
@@ -22931,9 +22930,9 @@ var Scratch3SoundBlocks = function () {
         value: function playSoundAndWait(args, util) {
             var index = this._getSoundIndex(args.SOUND_MENU, util);
             if (index >= 0) {
-                var md5 = util.target.sprite.sounds[index].md5;
+                var soundId = util.target.sprite.sounds[index].soundId;
                 if (util.target.audioPlayer === null) return;
-                return util.target.audioPlayer.playSound(md5);
+                return util.target.audioPlayer.playSound(soundId);
             }
         }
     }, {
@@ -22945,18 +22944,20 @@ var Scratch3SoundBlocks = function () {
                 return -1;
             }
 
-            var index = void 0;
-
-            // try to convert to a number and use that as an index
-            var num = parseInt(soundName, 10);
-            if (!isNaN(num)) {
-                index = MathUtil.wrapClamp(num, 0, len - 1);
+            // look up by name first
+            var index = this.getSoundIndexByName(soundName, util);
+            if (index !== -1) {
                 return index;
             }
 
-            // return the index for the sound of that name
-            index = this.getSoundIndexByName(soundName, util);
-            return index;
+            // then try using the sound name as a 1-indexed index
+            var oneIndexedIndex = parseInt(soundName, 10);
+            if (!isNaN(oneIndexedIndex)) {
+                return MathUtil.wrapClamp(oneIndexedIndex - 1, 0, len - 1);
+            }
+
+            // could not be found as a name or converted to index, return -1
+            return -1;
         }
     }, {
         key: 'getSoundIndexByName',
@@ -22995,7 +22996,7 @@ var Scratch3SoundBlocks = function () {
             var drum = Cast.toNumber(args.DRUM);
             drum -= 1; // drums are one-indexed
             if (typeof this.runtime.audioEngine === 'undefined') return;
-            drum = MathUtil.wrapClamp(drum, 0, this.runtime.audioEngine.numDrums);
+            drum = MathUtil.wrapClamp(drum, 0, this.runtime.audioEngine.numDrums - 1);
             var beats = Cast.toNumber(args.BEATS);
             beats = this._clampBeats(beats);
             if (util.target.audioPlayer === null) return;
@@ -23021,7 +23022,7 @@ var Scratch3SoundBlocks = function () {
             var instNum = Cast.toNumber(args.INSTRUMENT);
             instNum -= 1; // instruments are one-indexed
             if (typeof this.runtime.audioEngine === 'undefined') return;
-            instNum = MathUtil.wrapClamp(instNum, 0, this.runtime.audioEngine.numInstruments);
+            instNum = MathUtil.wrapClamp(instNum, 0, this.runtime.audioEngine.numInstruments - 1);
             soundState.currentInstrument = instNum;
             return this.runtime.audioEngine.instrumentPlayer.loadInstrument(soundState.currentInstrument);
         }
@@ -23185,8 +23186,8 @@ var Scratch3SoundBlocks = function () {
         }
 
         /** The minimum and maximum tempo values, in bpm.
-        * @type {{min: number, max: number}}
-        */
+         * @type {{min: number, max: number}}
+         */
 
     }, {
         key: 'TEMPO_RANGE',
@@ -23195,8 +23196,8 @@ var Scratch3SoundBlocks = function () {
         }
 
         /** The minimum and maximum values for each sound effect.
-        * @type {{effect:{min: number, max: number}}}
-        */
+         * @type {{effect:{min: number, max: number}}}
+         */
 
     }, {
         key: 'EFFECT_RANGE',
@@ -25716,7 +25717,7 @@ var Runtime = function (_EventEmitter) {
     }, {
         key: 'STAGE_HEIGHT',
         get: function get() {
-            return 360;
+            return 800;
         }
 
         /**
@@ -29412,13 +29413,11 @@ var VirtualMachine = function (_EventEmitter) {
             newsprite.blocks = newsprite.blocks._blocks;
 
             var pJson = JSON.parse(this.toJSON());
-            console.log('pJson在这里----->', pJson);
             var json = {
                 targets: []
             };
             for (var i in pJson.targets) {
                 if (pJson.targets[i].id == targetId) {
-                    console.log('找到pJson的目标sprite在这里----->', pJson.targets[i]);
                     pJson.targets[i].id = uid();
                     var json = {
                         targets: [pJson.targets[i]]
@@ -29428,23 +29427,14 @@ var VirtualMachine = function (_EventEmitter) {
             }
 
             return sb3.deserialize(json, this.runtime).then(function (targets) {
-
-                console.log('targets', targets);
                 for (var n = 0; n < targets.length; n++) {
                     if (targets[n] !== null) {
                         _this7.runtime.targets.push(targets[n]);
-                        _this7.editingTarget = _this7.runtime.targets[n];
                         targets[n].updateAllDrawableProperties();
                     }
                 }
-                // // Select the first target for editing, e.g., the first sprite.
-                // if (this.runtime.targets.length > 1) {
-                //     this.editingTarget = this.runtime.targets[1];
-                // } else {
-                //     this.editingTarget = this.runtime.targets[0];
-                // }
-
-                // Update the VM user's knowledge of targets and blocks on the workspace.
+                var pos = _this7.runtime.targets.length - 1;
+                _this7.editingTarget = _this7.runtime.targets[pos];
                 _this7.emitTargetsUpdate();
                 _this7.emitWorkspaceUpdate();
                 _this7.runtime.setEditingTarget(_this7.editingTarget);
@@ -29546,6 +29536,38 @@ var VirtualMachine = function (_EventEmitter) {
             } else {
                 throw new Error('No costume with the provided id.');
             }
+        }
+
+        /**
+         * Get a sound buffer from the audio engine.
+         * @param {int} soundIndex - the index of the sound to be got.
+         * @return {AudioBuffer} the sound's audio buffer.
+         */
+
+    }, {
+        key: 'getSoundBuffer',
+        value: function getSoundBuffer(soundIndex) {
+            var id = this.editingTarget.sprite.sounds[soundIndex].soundId;
+            if (id && this.runtime && this.runtime.audioEngine) {
+                return this.runtime.audioEngine.getSoundBuffer(id);
+            }
+            return null;
+        }
+
+        /**
+         * Update a sound buffer.
+         * @param {int} soundIndex - the index of the sound to be updated.
+         * @param {AudioBuffer} newBuffer - new audio buffer for the audio engine.
+         */
+
+    }, {
+        key: 'updateSoundBuffer',
+        value: function updateSoundBuffer(soundIndex, newBuffer) {
+            var id = this.editingTarget.sprite.sounds[soundIndex].soundId;
+            if (id && this.runtime && this.runtime.audioEngine) {
+                this.runtime.audioEngine.updateSoundBuffer(id, newBuffer);
+            }
+            this.emitTargetsUpdate();
         }
 
         /**
@@ -31759,7 +31781,7 @@ module.exports = {
 	"_args": [
 		[
 			"got@5.7.1",
-			"C:\\Users\\Wyp\\WebstormProjects\\mxc-gui\\node_modules\\scratch-vm"
+			"C:\\Users\\Wyp\\WebstormProjects\\mxc-gui-pad\\node_modules\\scratch-vm"
 		]
 	],
 	"_from": "got@5.7.1",
@@ -31783,7 +31805,7 @@ module.exports = {
 	],
 	"_resolved": "https://registry.npmjs.org/got/-/got-5.7.1.tgz",
 	"_spec": "5.7.1",
-	"_where": "C:\\Users\\Wyp\\WebstormProjects\\mxc-gui\\node_modules\\scratch-vm",
+	"_where": "C:\\Users\\Wyp\\WebstormProjects\\mxc-gui-pad\\node_modules\\scratch-vm",
 	"browser": {
 		"unzip-response": false
 	},
