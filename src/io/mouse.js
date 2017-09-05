@@ -66,7 +66,7 @@ class Mouse {
      * @return {number} Clamped Y position of the mouse cursor.
      */
     getY () {
-        return MathUtil.clamp(-this._y, -180, 180);
+        return MathUtil.clamp(-this._y, -400, 400);
     }
 
     /**

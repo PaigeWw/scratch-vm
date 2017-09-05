@@ -27094,7 +27094,7 @@ var Mouse = function () {
     }, {
         key: 'getY',
         value: function getY() {
-            return MathUtil.clamp(-this._y, -180, 180);
+            return MathUtil.clamp(-this._y, -400, 400);
         }
 
         /**
