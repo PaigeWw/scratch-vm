@@ -21677,6 +21677,7 @@ var Scratch3MotionBlocks = function () {
                 motion_pointindirection: this.pointInDirection,
                 motion_pointtowards: this.pointTowards,
                 motion_glidesecstoxy: this.glide,
+                motion_glideto: this.glideTo,
                 motion_ifonedgebounce: this.ifOnEdgeBounce,
                 motion_setrotationstyle: this.setRotationStyle,
                 motion_changexby: this.changeX,
@@ -21705,25 +21706,33 @@ var Scratch3MotionBlocks = function () {
             util.target.setXY(x, y);
         }
     }, {
-        key: 'goTo',
-        value: function goTo(args, util) {
+        key: 'getTargetXY',
+        value: function getTargetXY(targetName, util) {
             var targetX = 0;
             var targetY = 0;
-            if (args.TO === '_mouse_') {
+            if (targetName === '_mouse_') {
                 targetX = util.ioQuery('mouse', 'getX');
                 targetY = util.ioQuery('mouse', 'getY');
-            } else if (args.TO === '_random_') {
+            } else if (targetName === '_random_') {
                 var stageWidth = this.runtime.constructor.STAGE_WIDTH;
                 var stageHeight = this.runtime.constructor.STAGE_HEIGHT;
                 targetX = Math.round(stageWidth * (Math.random() - 0.5));
                 targetY = Math.round(stageHeight * (Math.random() - 0.5));
             } else {
-                var goToTarget = this.runtime.getSpriteTargetByName(args.TO);
+                var goToTarget = this.runtime.getSpriteTargetByName(targetName);
                 if (!goToTarget) return;
                 targetX = goToTarget.x;
                 targetY = goToTarget.y;
             }
-            util.target.setXY(targetX, targetY);
+            return [targetX, targetY];
+        }
+    }, {
+        key: 'goTo',
+        value: function goTo(args, util) {
+            var targetXY = this.getTargetXY(args.TO, util);
+            if (targetXY) {
+                util.target.setXY(targetXY[0], targetXY[1]);
+            }
         }
     }, {
         key: 'turnRight',
@@ -21766,7 +21775,20 @@ var Scratch3MotionBlocks = function () {
     }, {
         key: 'glide',
         value: function glide(args, util) {
-            if (!util.stackFrame.timer) {
+            if (util.stackFrame.timer) {
+                var timeElapsed = util.stackFrame.timer.timeElapsed();
+                if (timeElapsed < util.stackFrame.duration * 1000) {
+                    // In progress: move to intermediate position.
+                    var frac = timeElapsed / (util.stackFrame.duration * 1000);
+                    var dx = frac * (util.stackFrame.endX - util.stackFrame.startX);
+                    var dy = frac * (util.stackFrame.endY - util.stackFrame.startY);
+                    util.target.setXY(util.stackFrame.startX + dx, util.stackFrame.startY + dy);
+                    util.yield();
+                } else {
+                    // Finished: move to final position.
+                    util.target.setXY(util.stackFrame.endX, util.stackFrame.endY);
+                }
+            } else {
                 // First time: save data for future use.
                 util.stackFrame.timer = new Timer();
                 util.stackFrame.timer.start();
@@ -21781,19 +21803,14 @@ var Scratch3MotionBlocks = function () {
                     return;
                 }
                 util.yield();
-            } else {
-                var timeElapsed = util.stackFrame.timer.timeElapsed();
-                if (timeElapsed < util.stackFrame.duration * 1000) {
-                    // In progress: move to intermediate position.
-                    var frac = timeElapsed / (util.stackFrame.duration * 1000);
-                    var dx = frac * (util.stackFrame.endX - util.stackFrame.startX);
-                    var dy = frac * (util.stackFrame.endY - util.stackFrame.startY);
-                    util.target.setXY(util.stackFrame.startX + dx, util.stackFrame.startY + dy);
-                    util.yield();
-                } else {
-                    // Finished: move to final position.
-                    util.target.setXY(util.stackFrame.endX, util.stackFrame.endY);
-                }
+            }
+        }
+    }, {
+        key: 'glideTo',
+        value: function glideTo(args, util) {
+            var targetXY = this.getTargetXY(args.TO, util);
+            if (targetXY) {
+                this.glide({ SECS: args.SECS, X: targetXY[0], Y: targetXY[1] }, util);
             }
         }
     }, {
@@ -22736,19 +22753,19 @@ var Scratch3SensingBlocks = function () {
             var menuOption = Cast.toString(args.CURRENTMENU).toLowerCase();
             var date = new Date();
             switch (menuOption) {
-                case 'year':
+                case '年':
                     return date.getFullYear();
-                case 'month':
+                case '月':
                     return date.getMonth() + 1; // getMonth is zero-based
-                case 'date':
+                case '日':
                     return date.getDate();
-                case 'dayofweek':
+                case '星期':
                     return date.getDay() + 1; // getDay is zero-based, Sun=0
-                case 'hour':
+                case '时':
                     return date.getHours();
-                case 'minute':
+                case '分':
                     return date.getMinutes();
-                case 'second':
+                case '秒':
                     return date.getSeconds();
             }
             return 0;
@@ -22779,7 +22796,6 @@ var Scratch3SensingBlocks = function () {
         key: 'getAttributeOf',
         value: function getAttributeOf(args) {
             var attrTarget = void 0;
-
             if (args.OBJECT === '_stage_') {
                 attrTarget = this.runtime.getTargetForStage();
             } else {
@@ -22928,10 +22944,13 @@ var Scratch3SoundBlocks = function () {
     }, {
         key: 'playSoundAndWait',
         value: function playSoundAndWait(args, util) {
+            console.log('--------playSoundAndWait----------');
             var index = this._getSoundIndex(args.SOUND_MENU, util);
+            console.log('index:', index);
             if (index >= 0) {
                 var soundId = util.target.sprite.sounds[index].soundId;
                 if (util.target.audioPlayer === null) return;
+                console.log('调用了audioPlayer.playSound');
                 return util.target.audioPlayer.playSound(soundId);
             }
         }

@@ -1099,6 +1099,7 @@ var Blocks = function () {
                     block.mutation = mutationAdapter(args.value);
                     break;
                 case 'checkbox':
+                    console.log('checkbox--->',args);
                     block.isMonitored = args.value;
                     if (optRuntime && wasMonitored && !block.isMonitored) {
                         optRuntime.requestRemoveMonitor(block.id);
@@ -6250,7 +6251,7 @@ module.exports = {
       var array = this._array;
       var maxIndex = array.length - 1;
       var ii = 0;
-      return new Iterator(function() 
+      return new Iterator(function()
         {return ii > maxIndex ?
           iteratorDone() :
           iteratorValue(type, ii, array[reverse ? maxIndex - ii++ : ii++])}
@@ -6721,7 +6722,7 @@ module.exports = {
 
     Repeat.prototype.__iterator = function(type, reverse) {var this$0 = this;
       var ii = 0;
-      return new Iterator(function() 
+      return new Iterator(function()
         {return ii < this$0.size ? iteratorValue(type, ii++, this$0._value) : iteratorDone()}
       );
     };
@@ -8919,7 +8920,7 @@ module.exports = {
         return flipSequence;
       };
     }
-    reversedSequence.get = function(key, notSetValue) 
+    reversedSequence.get = function(key, notSetValue)
       {return iterable.get(useKeys ? key : -1 - key, notSetValue)};
     reversedSequence.has = function(key )
       {return iterable.has(useKeys ? key : -1 - key)};
@@ -9118,7 +9119,7 @@ module.exports = {
         return this.cacheResult().__iterate(fn, reverse);
       }
       var iterations = 0;
-      iterable.__iterate(function(v, k, c) 
+      iterable.__iterate(function(v, k, c)
         {return predicate.call(context, v, k, c) && ++iterations && fn(v, k, this$0)}
       );
       return iterations;
@@ -9309,7 +9310,7 @@ module.exports = {
     interposedSequence.size = iterable.size && iterable.size * 2 -1;
     interposedSequence.__iterateUncached = function(fn, reverse) {var this$0 = this;
       var iterations = 0;
-      iterable.__iterate(function(v, k) 
+      iterable.__iterate(function(v, k)
         {return (!iterations || fn(separator, iterations++, this$0) !== false) &&
         fn(v, iterations++, this$0) !== false},
         reverse
@@ -16202,6 +16203,8 @@ var Scratch3EventBlocks = function () {
         key: 'broadcast',
         value: function broadcast(args, util) {
             var broadcastOption = Cast.toString(args.BROADCAST_OPTION);
+            console.log('broadcastOption--->',broadcastOption);
+
             util.startHats('event_whenbroadcastreceived', {
                 BROADCAST_OPTION: broadcastOption
             });
@@ -16536,6 +16539,7 @@ var Scratch3MotionBlocks = function () {
                 motion_pointindirection: this.pointInDirection,
                 motion_pointtowards: this.pointTowards,
                 motion_glidesecstoxy: this.glide,
+                motion_glideto: this.glideTo,
                 motion_ifonedgebounce: this.ifOnEdgeBounce,
                 motion_setrotationstyle: this.setRotationStyle,
                 motion_changexby: this.changeX,
@@ -16564,25 +16568,33 @@ var Scratch3MotionBlocks = function () {
             util.target.setXY(x, y);
         }
     }, {
-        key: 'goTo',
-        value: function goTo(args, util) {
+        key: 'getTargetXY',
+        value: function getTargetXY(targetName, util) {
             var targetX = 0;
             var targetY = 0;
-            if (args.TO === '_mouse_') {
+            if (targetName === '_mouse_') {
                 targetX = util.ioQuery('mouse', 'getX');
                 targetY = util.ioQuery('mouse', 'getY');
-            } else if (args.TO === '_random_') {
+            } else if (targetName === '_random_') {
                 var stageWidth = this.runtime.constructor.STAGE_WIDTH;
                 var stageHeight = this.runtime.constructor.STAGE_HEIGHT;
                 targetX = Math.round(stageWidth * (Math.random() - 0.5));
                 targetY = Math.round(stageHeight * (Math.random() - 0.5));
             } else {
-                var goToTarget = this.runtime.getSpriteTargetByName(args.TO);
+                var goToTarget = this.runtime.getSpriteTargetByName(targetName);
                 if (!goToTarget) return;
                 targetX = goToTarget.x;
                 targetY = goToTarget.y;
             }
-            util.target.setXY(targetX, targetY);
+            return [targetX, targetY];
+        }
+    }, {
+        key: 'goTo',
+        value: function goTo(args, util) {
+            var targetXY = this.getTargetXY(args.TO, util);
+            if (targetXY) {
+                util.target.setXY(targetXY[0], targetXY[1]);
+            }
         }
     }, {
         key: 'turnRight',
@@ -16625,7 +16637,20 @@ var Scratch3MotionBlocks = function () {
     }, {
         key: 'glide',
         value: function glide(args, util) {
-            if (!util.stackFrame.timer) {
+            if (util.stackFrame.timer) {
+                var timeElapsed = util.stackFrame.timer.timeElapsed();
+                if (timeElapsed < util.stackFrame.duration * 1000) {
+                    // In progress: move to intermediate position.
+                    var frac = timeElapsed / (util.stackFrame.duration * 1000);
+                    var dx = frac * (util.stackFrame.endX - util.stackFrame.startX);
+                    var dy = frac * (util.stackFrame.endY - util.stackFrame.startY);
+                    util.target.setXY(util.stackFrame.startX + dx, util.stackFrame.startY + dy);
+                    util.yield();
+                } else {
+                    // Finished: move to final position.
+                    util.target.setXY(util.stackFrame.endX, util.stackFrame.endY);
+                }
+            } else {
                 // First time: save data for future use.
                 util.stackFrame.timer = new Timer();
                 util.stackFrame.timer.start();
@@ -16640,19 +16665,14 @@ var Scratch3MotionBlocks = function () {
                     return;
                 }
                 util.yield();
-            } else {
-                var timeElapsed = util.stackFrame.timer.timeElapsed();
-                if (timeElapsed < util.stackFrame.duration * 1000) {
-                    // In progress: move to intermediate position.
-                    var frac = timeElapsed / (util.stackFrame.duration * 1000);
-                    var dx = frac * (util.stackFrame.endX - util.stackFrame.startX);
-                    var dy = frac * (util.stackFrame.endY - util.stackFrame.startY);
-                    util.target.setXY(util.stackFrame.startX + dx, util.stackFrame.startY + dy);
-                    util.yield();
-                } else {
-                    // Finished: move to final position.
-                    util.target.setXY(util.stackFrame.endX, util.stackFrame.endY);
-                }
+            }
+        }
+    }, {
+        key: 'glideTo',
+        value: function glideTo(args, util) {
+            var targetXY = this.getTargetXY(args.TO, util);
+            if (targetXY) {
+                this.glide({ SECS: args.SECS, X: targetXY[0], Y: targetXY[1] }, util);
             }
         }
     }, {
@@ -17595,19 +17615,19 @@ var Scratch3SensingBlocks = function () {
             var menuOption = Cast.toString(args.CURRENTMENU).toLowerCase();
             var date = new Date();
             switch (menuOption) {
-                case 'year':
+                case '年':
                     return date.getFullYear();
-                case 'month':
+                case '月':
                     return date.getMonth() + 1; // getMonth is zero-based
-                case 'date':
+                case '日':
                     return date.getDate();
-                case 'dayofweek':
+                case '星期':
                     return date.getDay() + 1; // getDay is zero-based, Sun=0
-                case 'hour':
+                case '时':
                     return date.getHours();
-                case 'minute':
+                case '分':
                     return date.getMinutes();
-                case 'second':
+                case '秒':
                     return date.getSeconds();
             }
             return 0;
@@ -17638,7 +17658,6 @@ var Scratch3SensingBlocks = function () {
         key: 'getAttributeOf',
         value: function getAttributeOf(args) {
             var attrTarget = void 0;
-
             if (args.OBJECT === '_stage_') {
                 attrTarget = this.runtime.getTargetForStage();
             } else {
@@ -17787,10 +17806,13 @@ var Scratch3SoundBlocks = function () {
     }, {
         key: 'playSoundAndWait',
         value: function playSoundAndWait(args, util) {
+            console.log('--------playSoundAndWait----------');
             var index = this._getSoundIndex(args.SOUND_MENU, util);
+            console.log('index:', index);
             if (index >= 0) {
                 var soundId = util.target.sprite.sounds[index].soundId;
                 if (util.target.audioPlayer === null) return;
+                console.log('调用了audioPlayer.playSound');
                 return util.target.audioPlayer.playSound(soundId);
             }
         }
@@ -24121,7 +24143,7 @@ DomHandler.prototype.onerror = function(error){
 
 DomHandler.prototype.onclosetag = function(){
 	//if(this._tagStack.pop().name !== name) this._handleCallback(Error("Tagname didn't match!"));
-	
+
 	var elem = this._tagStack.pop();
 
 	if(this._options.withEndIndices){
@@ -24640,7 +24662,7 @@ exports.prepend = function(elem, prev){
 	if(elem.prev){
 		elem.prev.next = prev;
 	}
-	
+
 	prev.parent = parent;
 	prev.prev = elem.prev;
 	prev.next = elem;
@@ -29024,7 +29046,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	
+
 	/**
 	 * This is the common logic for both the Node.js and web browser
 	 * implementations of `debug()`.
@@ -29385,7 +29407,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	
+
 	/**
 	 * Module dependencies.
 	 */
@@ -29722,7 +29744,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  } catch(e){
 	    return error();
 	  }
-	  return p; 
+	  return p;
 	};
 
 	/**
@@ -29795,7 +29817,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	
+
 	/**
 	 * This is the web browser implementation of `debug()`.
 	 *
@@ -29969,7 +29991,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	
+
 	/**
 	 * This is the common logic for both the Node.js and web browser
 	 * implementations of `debug()`.
@@ -31232,7 +31254,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 13 */
 /***/ function(module, exports) {
 
-	
+
 	/**
 	 * Expose `Emitter`.
 	 */
@@ -32146,7 +32168,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	
+
 	module.exports = __webpack_require__(19);
 
 
@@ -32154,7 +32176,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	
+
 	module.exports = __webpack_require__(20);
 
 	/**
@@ -33019,7 +33041,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 23 */
 /***/ function(module, exports) {
 
-	
+
 	/**
 	 * Module exports.
 	 *
@@ -34503,7 +34525,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 28 */
 /***/ function(module, exports) {
 
-	
+
 	/**
 	 * Gets the keys for an object.
 	 *
@@ -35078,7 +35100,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
-	
+
 	/**
 	 * Expose `Emitter`.
 	 */
@@ -35290,7 +35312,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 37 */
 /***/ function(module, exports) {
 
-	
+
 	module.exports = function(a, b){
 	  var fn = function(){};
 	  fn.prototype = b.prototype;
@@ -35912,7 +35934,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 42 */
 /***/ function(module, exports) {
 
-	
+
 	var indexOf = [].indexOf;
 
 	module.exports = function(arr, obj){
@@ -36464,7 +36486,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 48 */
 /***/ function(module, exports) {
 
-	
+
 	/**
 	 * Expose `Backoff`.
 	 */

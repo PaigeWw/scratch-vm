@@ -120,10 +120,13 @@ class Scratch3SoundBlocks {
     }
 
     playSoundAndWait (args, util) {
+        console.log('--------playSoundAndWait----------');
         const index = this._getSoundIndex(args.SOUND_MENU, util);
+        console.log('index:',index);
         if (index >= 0) {
             const soundId = util.target.sprite.sounds[index].soundId;
             if (util.target.audioPlayer === null) return;
+            console.log('调用了audioPlayer.playSound');
             return util.target.audioPlayer.playSound(soundId);
         }
     }

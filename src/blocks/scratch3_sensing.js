@@ -102,13 +102,13 @@ class Scratch3SensingBlocks {
         const menuOption = Cast.toString(args.CURRENTMENU).toLowerCase();
         const date = new Date();
         switch (menuOption) {
-        case 'year': return date.getFullYear();
-        case 'month': return date.getMonth() + 1; // getMonth is zero-based
-        case 'date': return date.getDate();
-        case 'dayofweek': return date.getDay() + 1; // getDay is zero-based, Sun=0
-        case 'hour': return date.getHours();
-        case 'minute': return date.getMinutes();
-        case 'second': return date.getSeconds();
+            case '年': return date.getFullYear();
+            case '月': return date.getMonth() + 1; // getMonth is zero-based
+            case '日': return date.getDate();
+            case '星期': return date.getDay() + 1; // getDay is zero-based, Sun=0
+            case '时': return date.getHours();
+            case '分': return date.getMinutes();
+            case '秒': return date.getSeconds();
         }
         return 0;
     }
@@ -132,9 +132,9 @@ class Scratch3SensingBlocks {
         return this.runtime.audioEngine.getLoudness();
     }
 
+
     getAttributeOf (args) {
         let attrTarget;
-
         if (args.OBJECT === '_stage_') {
             attrTarget = this.runtime.getTargetForStage();
         } else {
@@ -144,13 +144,13 @@ class Scratch3SensingBlocks {
         // Generic attributes
         if (attrTarget.isStage) {
             switch (args.PROPERTY) {
-            // Scratch 1.4 support
-            case 'background #': return attrTarget.currentCostume + 1;
+                // Scratch 1.4 support
+                case 'background #': return attrTarget.currentCostume + 1;
 
-            case 'backdrop #': return attrTarget.currentCostume + 1;
-            case 'backdrop name':
-                return attrTarget.sprite.costumes[attrTarget.currentCostume].name;
-            case 'volume': return; // @todo: Keep this in mind for sound blocks!
+                case 'backdrop #': return attrTarget.currentCostume + 1;
+                case 'backdrop name':
+                    return attrTarget.sprite.costumes[attrTarget.currentCostume].name;
+                case 'volume': return; // @todo: Keep this in mind for sound blocks!
             }
         } else {
             switch (args.PROPERTY) {
