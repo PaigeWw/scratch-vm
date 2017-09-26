@@ -825,6 +825,7 @@ class RenderedTarget extends Target {
             rotationStyle: this.rotationStyle,
             blocks: this.blocks._blocks,
             variables: this.variables,
+            messages: this.messages,
             lists: this.lists,
             costumes: costumes,
             sounds: this.getSounds()

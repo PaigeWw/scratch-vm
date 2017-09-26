@@ -38,13 +38,13 @@ class Target extends EventEmitter {
          * @type {Object.<string,*>}
          */
         this.variables = {};
-        // this.messages = [];
         /**
          * Dictionary of lists and their contents for this target.
          * Key is the list name.
          * @type {Object.<string,*>}
          */
         this.lists = {};
+        this.messages = {};
         /**
          * Dictionary of custom state for this target.
          * This can be used to store target-specific custom state for blocks which need it.
@@ -76,23 +76,21 @@ class Target extends EventEmitter {
      * @param {!string} name Name of the variable.
      * @return {!Variable} Variable object.
      */
-    lookupOrCreateVariable (name,type) {
+    lookupOrCreateVariable (name) {
         // If we have a local copy, return it.
-        const stage = this.runtime.getTargetForStage();
-        if (stage.variables.hasOwnProperty(name)) {
-            return stage.variables[name];
+        if (this.variables.hasOwnProperty(name)) {
+            return this.variables[name];
         }
-
         // If the stage has a global copy, return it.
         if (this.runtime && !this.isStage) {
+            const stage = this.runtime.getTargetForStage();
             if (stage.variables.hasOwnProperty(name)) {
                 return stage.variables[name];
             }
         }
         // No variable with this name exists - create it locally.
-        if(type && type === 'get') return 0;
         const newVariable = new Variable(name, 0, false);
-        stage.variables[name] = newVariable;
+        this.variables[name] = newVariable;
         return newVariable;
     }
 

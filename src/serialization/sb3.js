@@ -22,8 +22,10 @@ const serialize = function (runtime) {
     // Fetch targets
     const obj = Object.create(null);
     obj.targets = runtime.targets.filter(target => target.isOriginal);
-    console.log('sb3--->runtime.targets',obj.targets);
-    console.log('sb3--->json.targets',obj.targets);
+    // obj.targets[0].messages = 'messages'
+    console.log('sb3--->runtime.targets',obj.targets[0]);
+    console.log('sb3--->json.targets',JSON.parse(JSON.stringify(obj.targets[0])));
+
     // Assemble metadata
     const meta = Object.create(null);
     meta.semver = '3.0.0';
@@ -45,7 +47,7 @@ const serialize = function (runtime) {
  * @return {?Target} Target created (stage or sprite).
  */
 const parseScratchObject = function (object, runtime) {
-    console.log('parseScratchObject',object);
+    // console.log('parseScratchObject',object);
     if (!object.hasOwnProperty('name')) {
         // Watcher/monitor - skip this object until those are implemented in VM.
         // @todo
@@ -117,6 +119,11 @@ const parseScratchObject = function (object, runtime) {
                 variable.value,
                 variable.isPersistent
             );
+        }
+    }
+    if (object.hasOwnProperty('messages')) {
+        for(var key in object.messages){
+            target.messages[key] = object.messages[key];
         }
     }
     if (object.hasOwnProperty('lists')) {

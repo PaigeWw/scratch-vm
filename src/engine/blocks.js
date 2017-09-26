@@ -201,7 +201,7 @@ class Blocks {
             console.log('e.type == msg_create',e);
             const stage = optRuntime.getTargetForStage();
             optRuntime.createMsgPrompt(function (msgName) {
-                stage.messages.push([msgName,msgName]);
+                stage.messages[msgName] = msgName;
             })
         }
         if (typeof e.blockId !== 'string') return;
@@ -357,7 +357,7 @@ class Blocks {
             // Remove script, if one exists.
             this._deleteScript(e.id);
             // Otherwise, try to connect it in its new place.
-            if (typeof e.newInput === '.') {
+            if (typeof e.newInput === 'undefined') {
                 // Moved to the new parent's next connection.
                 this._blocks[e.newParent].next = e.id;
             } else {

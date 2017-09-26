@@ -3311,7 +3311,7 @@ var Blocks = function () {
                 console.log('e.type == msg_create', e);
                 var _stage = optRuntime.getTargetForStage();
                 optRuntime.createMsgPrompt(function (msgName) {
-                    _stage.messages.push([msgName, msgName]);
+                    _stage.messages[msgName] = msgName;
                 });
             }
             if (typeof e.blockId !== 'string') return;
@@ -3475,7 +3475,7 @@ var Blocks = function () {
                 // Remove script, if one exists.
                 this._deleteScript(e.id);
                 // Otherwise, try to connect it in its new place.
-                if (typeof e.newInput === '.') {
+                if (typeof e.newInput === 'undefined') {
                     // Moved to the new parent's next connection.
                     this._blocks[e.newParent].next = e.id;
                 } else {
@@ -5640,6 +5640,7 @@ var RenderedTarget = function (_Target) {
                 rotationStyle: this.rotationStyle,
                 blocks: this.blocks._blocks,
                 variables: this.variables,
+                messages: this.messages,
                 lists: this.lists,
                 costumes: costumes,
                 sounds: this.getSounds()
@@ -23911,13 +23912,13 @@ var Target = function (_EventEmitter) {
      * @type {Object.<string,*>}
      */
     _this.variables = {};
-    // this.messages = [];
     /**
      * Dictionary of lists and their contents for this target.
      * Key is the list name.
      * @type {Object.<string,*>}
      */
     _this.lists = {};
+    _this.messages = {};
     /**
      * Dictionary of custom state for this target.
      * This can be used to store target-specific custom state for blocks which need it.
@@ -23960,23 +23961,21 @@ var Target = function (_EventEmitter) {
 
   }, {
     key: 'lookupOrCreateVariable',
-    value: function lookupOrCreateVariable(name, type) {
+    value: function lookupOrCreateVariable(name) {
       // If we have a local copy, return it.
-      var stage = this.runtime.getTargetForStage();
-      if (stage.variables.hasOwnProperty(name)) {
-        return stage.variables[name];
+      if (this.variables.hasOwnProperty(name)) {
+        return this.variables[name];
       }
-
       // If the stage has a global copy, return it.
       if (this.runtime && !this.isStage) {
+        var stage = this.runtime.getTargetForStage();
         if (stage.variables.hasOwnProperty(name)) {
           return stage.variables[name];
         }
       }
       // No variable with this name exists - create it locally.
-      if (type && type === 'get') return 0;
       var newVariable = new Variable(name, 0, false);
-      stage.variables[name] = newVariable;
+      this.variables[name] = newVariable;
       return newVariable;
     }
 
@@ -26450,8 +26449,10 @@ var serialize = function serialize(runtime) {
     obj.targets = runtime.targets.filter(function (target) {
         return target.isOriginal;
     });
-    console.log('sb3--->runtime.targets', obj.targets);
-    console.log('sb3--->json.targets', obj.targets);
+    // obj.targets[0].messages = 'messages'
+    console.log('sb3--->runtime.targets', obj.targets[0]);
+    console.log('sb3--->json.targets', JSON.parse(JSON.stringify(obj.targets[0])));
+
     // Assemble metadata
     var meta = Object.create(null);
     meta.semver = '3.0.0';
@@ -26473,7 +26474,7 @@ var serialize = function serialize(runtime) {
  * @return {?Target} Target created (stage or sprite).
  */
 var parseScratchObject = function parseScratchObject(object, runtime) {
-    console.log('parseScratchObject', object);
+    // console.log('parseScratchObject',object);
     if (!object.hasOwnProperty('name')) {
         // Watcher/monitor - skip this object until those are implemented in VM.
         // @todo
@@ -26539,6 +26540,11 @@ var parseScratchObject = function parseScratchObject(object, runtime) {
         for (var j = 0; j < object.variables.length; j++) {
             var variable = object.variables[j];
             target.variables[variable.name] = new Variable(variable.name, variable.value, variable.isPersistent);
+        }
+    }
+    if (object.hasOwnProperty('messages')) {
+        for (var key in object.messages) {
+            target.messages[key] = object.messages[key];
         }
     }
     if (object.hasOwnProperty('lists')) {
