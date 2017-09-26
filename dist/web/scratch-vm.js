@@ -3300,6 +3300,20 @@ var Blocks = function () {
         value: function blocklyListen(e, optRuntime) {
             // Validate event
             if ((typeof e === 'undefined' ? 'undefined' : _typeof(e)) !== 'object') return;
+            if (e.type == 'var_delete') {
+                var stage = optRuntime.getTargetForStage();
+                if (stage.variables.hasOwnProperty(e.varName)) {
+                    delete stage.variables[e.varName];
+                    optRuntime.requestRemoveMonitor(e.varId);
+                }
+            }
+            if (e.type == 'msg_create') {
+                console.log('e.type == msg_create', e);
+                var _stage = optRuntime.getTargetForStage();
+                optRuntime.createMsgPrompt(function (msgName) {
+                    _stage.messages.push([msgName, msgName]);
+                });
+            }
             if (typeof e.blockId !== 'string') return;
 
             // UI event: clicked scripts toggle in the runtime.
@@ -3461,7 +3475,7 @@ var Blocks = function () {
                 // Remove script, if one exists.
                 this._deleteScript(e.id);
                 // Otherwise, try to connect it in its new place.
-                if (typeof e.newInput === 'undefined') {
+                if (typeof e.newInput === '.') {
                     // Moved to the new parent's next connection.
                     this._blocks[e.newParent].next = e.id;
                 } else {
@@ -18829,7 +18843,7 @@ var Scratch3DataBlocks = function () {
     }, {
         key: 'getVariable',
         value: function getVariable(args, util) {
-            var variable = util.target.lookupOrCreateVariable(args.VARIABLE);
+            var variable = util.target.lookupOrCreateVariable(args.VARIABLE, 'get');
             return variable.value;
         }
     }, {
@@ -19026,6 +19040,7 @@ var Scratch3EventBlocks = function () {
         key: 'broadcast',
         value: function broadcast(args, util) {
             var broadcastOption = Cast.toString(args.BROADCAST_OPTION);
+
             util.startHats('event_whenbroadcastreceived', {
                 BROADCAST_OPTION: broadcastOption
             });
@@ -23405,6 +23420,12 @@ var Runtime = function (_EventEmitter) {
                 _this2._step();
             }, interval);
         }
+    }, {
+        key: 'createMsgPrompt',
+        value: function createMsgPrompt() {
+            console.log('createMsgPrompt');
+            return;
+        }
     }], [{
         key: 'STAGE_WIDTH',
         get: function get() {
@@ -23890,6 +23911,7 @@ var Target = function (_EventEmitter) {
      * @type {Object.<string,*>}
      */
     _this.variables = {};
+    // this.messages = [];
     /**
      * Dictionary of lists and their contents for this target.
      * Key is the list name.
@@ -23938,21 +23960,23 @@ var Target = function (_EventEmitter) {
 
   }, {
     key: 'lookupOrCreateVariable',
-    value: function lookupOrCreateVariable(name) {
+    value: function lookupOrCreateVariable(name, type) {
       // If we have a local copy, return it.
-      if (this.variables.hasOwnProperty(name)) {
-        return this.variables[name];
+      var stage = this.runtime.getTargetForStage();
+      if (stage.variables.hasOwnProperty(name)) {
+        return stage.variables[name];
       }
+
       // If the stage has a global copy, return it.
       if (this.runtime && !this.isStage) {
-        var stage = this.runtime.getTargetForStage();
         if (stage.variables.hasOwnProperty(name)) {
           return stage.variables[name];
         }
       }
       // No variable with this name exists - create it locally.
+      if (type && type === 'get') return 0;
       var newVariable = new Variable(name, 0, false);
-      this.variables[name] = newVariable;
+      stage.variables[name] = newVariable;
       return newVariable;
     }
 
@@ -26937,7 +26961,6 @@ var VirtualMachine = function (_EventEmitter) {
         value: function addSprite2(json) {
             var _this3 = this;
 
-            console.log('sparite-Json', json);
             // Validate & parse
             if (typeof json !== 'string' && (typeof json === 'undefined' ? 'undefined' : _typeof(json)) !== 'object') {
                 log.error('Failed to parse sprite. Non-string supplied to addSprite2.');
@@ -27056,7 +27079,6 @@ var VirtualMachine = function (_EventEmitter) {
 
             loadCostume(md5ext, backdropObject, this.runtime).then(function () {
                 var stage = _this6.runtime.getTargetForStage();
-                console.log('-----stage----->', stage);
                 stage.sprite.costumes.push(backdropObject);
                 stage.setCostume(stage.sprite.costumes.length - 1);
             });
@@ -27456,6 +27478,7 @@ var VirtualMachine = function (_EventEmitter) {
         value: function emitWorkspaceUpdate() {
             // @todo Include variables scoped to editing target also.
             var variableMap = this.runtime.getTargetForStage().variables;
+
             var variables = Object.keys(variableMap).map(function (k) {
                 return variableMap[k];
             });

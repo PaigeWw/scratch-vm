@@ -250,7 +250,6 @@ class VirtualMachine extends EventEmitter {
      * @returns {Promise} Promise that resolves after the sprite is added
      */
     addSprite2 (json) {
-        console.log('sparite-Json',json)
         // Validate & parse
         if (typeof json !== 'string' && typeof json !=='object') {
             log.error('Failed to parse sprite. Non-string supplied to addSprite2.');
@@ -347,7 +346,6 @@ class VirtualMachine extends EventEmitter {
     addBackdrop (md5ext, backdropObject) {
         loadCostume(md5ext, backdropObject, this.runtime).then(() => {
             const stage = this.runtime.getTargetForStage();
-            console.log('-----stage----->', stage);
             stage.sprite.costumes.push(backdropObject);
             stage.setCostume(stage.sprite.costumes.length - 1);
         });
@@ -681,6 +679,7 @@ class VirtualMachine extends EventEmitter {
     emitWorkspaceUpdate () {
         // @todo Include variables scoped to editing target also.
         const variableMap = this.runtime.getTargetForStage().variables;
+
         const variables = Object.keys(variableMap).map(k => variableMap[k]);
 
         const xmlString = `<xml xmlns="http://www.w3.org/1999/xhtml">

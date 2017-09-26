@@ -993,6 +993,20 @@ var Blocks = function () {
         value: function blocklyListen(e, optRuntime) {
             // Validate event
             if ((typeof e === 'undefined' ? 'undefined' : _typeof(e)) !== 'object') return;
+            if (e.type == 'var_delete') {
+                var stage = optRuntime.getTargetForStage();
+                if (stage.variables.hasOwnProperty(e.varName)) {
+                    delete stage.variables[e.varName];
+                    optRuntime.requestRemoveMonitor(e.varId);
+                }
+            }
+            if (e.type == 'msg_create') {
+                console.log('e.type == msg_create', e);
+                var _stage = optRuntime.getTargetForStage();
+                optRuntime.createMsgPrompt(function (msgName) {
+                    _stage.messages.push([msgName, msgName]);
+                });
+            }
             if (typeof e.blockId !== 'string') return;
 
             // UI event: clicked scripts toggle in the runtime.
@@ -1099,7 +1113,6 @@ var Blocks = function () {
                     block.mutation = mutationAdapter(args.value);
                     break;
                 case 'checkbox':
-                    console.log('checkbox--->',args);
                     block.isMonitored = args.value;
                     if (optRuntime && wasMonitored && !block.isMonitored) {
                         optRuntime.requestRemoveMonitor(block.id);
@@ -1155,7 +1168,7 @@ var Blocks = function () {
                 // Remove script, if one exists.
                 this._deleteScript(e.id);
                 // Otherwise, try to connect it in its new place.
-                if (typeof e.newInput === 'undefined') {
+                if (typeof e.newInput === '.') {
                     // Moved to the new parent's next connection.
                     this._blocks[e.newParent].next = e.id;
                 } else {
@@ -6251,7 +6264,7 @@ module.exports = {
       var array = this._array;
       var maxIndex = array.length - 1;
       var ii = 0;
-      return new Iterator(function()
+      return new Iterator(function() 
         {return ii > maxIndex ?
           iteratorDone() :
           iteratorValue(type, ii, array[reverse ? maxIndex - ii++ : ii++])}
@@ -6722,7 +6735,7 @@ module.exports = {
 
     Repeat.prototype.__iterator = function(type, reverse) {var this$0 = this;
       var ii = 0;
-      return new Iterator(function()
+      return new Iterator(function() 
         {return ii < this$0.size ? iteratorValue(type, ii++, this$0._value) : iteratorDone()}
       );
     };
@@ -8920,7 +8933,7 @@ module.exports = {
         return flipSequence;
       };
     }
-    reversedSequence.get = function(key, notSetValue)
+    reversedSequence.get = function(key, notSetValue) 
       {return iterable.get(useKeys ? key : -1 - key, notSetValue)};
     reversedSequence.has = function(key )
       {return iterable.has(useKeys ? key : -1 - key)};
@@ -9119,7 +9132,7 @@ module.exports = {
         return this.cacheResult().__iterate(fn, reverse);
       }
       var iterations = 0;
-      iterable.__iterate(function(v, k, c)
+      iterable.__iterate(function(v, k, c) 
         {return predicate.call(context, v, k, c) && ++iterations && fn(v, k, this$0)}
       );
       return iterations;
@@ -9310,7 +9323,7 @@ module.exports = {
     interposedSequence.size = iterable.size && iterable.size * 2 -1;
     interposedSequence.__iterateUncached = function(fn, reverse) {var this$0 = this;
       var iterations = 0;
-      iterable.__iterate(function(v, k)
+      iterable.__iterate(function(v, k) 
         {return (!iterations || fn(separator, iterations++, this$0) !== false) &&
         fn(v, iterations++, this$0) !== false},
         reverse
@@ -15187,7 +15200,6 @@ var VirtualMachine = function (_EventEmitter) {
         value: function addSprite2(json) {
             var _this3 = this;
 
-            console.log('sparite-Json', json);
             // Validate & parse
             if (typeof json !== 'string' && (typeof json === 'undefined' ? 'undefined' : _typeof(json)) !== 'object') {
                 log.error('Failed to parse sprite. Non-string supplied to addSprite2.');
@@ -15306,7 +15318,6 @@ var VirtualMachine = function (_EventEmitter) {
 
             loadCostume(md5ext, backdropObject, this.runtime).then(function () {
                 var stage = _this6.runtime.getTargetForStage();
-                console.log('-----stage----->', stage);
                 stage.sprite.costumes.push(backdropObject);
                 stage.setCostume(stage.sprite.costumes.length - 1);
             });
@@ -15706,6 +15717,7 @@ var VirtualMachine = function (_EventEmitter) {
         value: function emitWorkspaceUpdate() {
             // @todo Include variables scoped to editing target also.
             var variableMap = this.runtime.getTargetForStage().variables;
+
             var variables = Object.keys(variableMap).map(function (k) {
                 return variableMap[k];
             });
@@ -16006,7 +16018,7 @@ var Scratch3DataBlocks = function () {
     }, {
         key: 'getVariable',
         value: function getVariable(args, util) {
-            var variable = util.target.lookupOrCreateVariable(args.VARIABLE);
+            var variable = util.target.lookupOrCreateVariable(args.VARIABLE, 'get');
             return variable.value;
         }
     }, {
@@ -16203,7 +16215,6 @@ var Scratch3EventBlocks = function () {
         key: 'broadcast',
         value: function broadcast(args, util) {
             var broadcastOption = Cast.toString(args.BROADCAST_OPTION);
-            console.log('broadcastOption--->',broadcastOption);
 
             util.startHats('event_whenbroadcastreceived', {
                 BROADCAST_OPTION: broadcastOption
@@ -20584,6 +20595,12 @@ var Runtime = function (_EventEmitter) {
                 _this2._step();
             }, interval);
         }
+    }, {
+        key: 'createMsgPrompt',
+        value: function createMsgPrompt() {
+            console.log('createMsgPrompt');
+            return;
+        }
     }], [{
         key: 'STAGE_WIDTH',
         get: function get() {
@@ -21069,6 +21086,7 @@ var Target = function (_EventEmitter) {
      * @type {Object.<string,*>}
      */
     _this.variables = {};
+    // this.messages = [];
     /**
      * Dictionary of lists and their contents for this target.
      * Key is the list name.
@@ -21117,21 +21135,23 @@ var Target = function (_EventEmitter) {
 
   }, {
     key: 'lookupOrCreateVariable',
-    value: function lookupOrCreateVariable(name) {
+    value: function lookupOrCreateVariable(name, type) {
       // If we have a local copy, return it.
-      if (this.variables.hasOwnProperty(name)) {
-        return this.variables[name];
+      var stage = this.runtime.getTargetForStage();
+      if (stage.variables.hasOwnProperty(name)) {
+        return stage.variables[name];
       }
+
       // If the stage has a global copy, return it.
       if (this.runtime && !this.isStage) {
-        var stage = this.runtime.getTargetForStage();
         if (stage.variables.hasOwnProperty(name)) {
           return stage.variables[name];
         }
       }
       // No variable with this name exists - create it locally.
+      if (type && type === 'get') return 0;
       var newVariable = new Variable(name, 0, false);
-      this.variables[name] = newVariable;
+      stage.variables[name] = newVariable;
       return newVariable;
     }
 
@@ -24143,7 +24163,7 @@ DomHandler.prototype.onerror = function(error){
 
 DomHandler.prototype.onclosetag = function(){
 	//if(this._tagStack.pop().name !== name) this._handleCallback(Error("Tagname didn't match!"));
-
+	
 	var elem = this._tagStack.pop();
 
 	if(this._options.withEndIndices){
@@ -24662,7 +24682,7 @@ exports.prepend = function(elem, prev){
 	if(elem.prev){
 		elem.prev.next = prev;
 	}
-
+	
 	prev.parent = parent;
 	prev.prev = elem.prev;
 	prev.next = elem;
@@ -29046,7 +29066,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-
+	
 	/**
 	 * This is the common logic for both the Node.js and web browser
 	 * implementations of `debug()`.
@@ -29407,7 +29427,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-
+	
 	/**
 	 * Module dependencies.
 	 */
@@ -29744,7 +29764,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  } catch(e){
 	    return error();
 	  }
-	  return p;
+	  return p; 
 	};
 
 	/**
@@ -29817,7 +29837,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-
+	
 	/**
 	 * This is the web browser implementation of `debug()`.
 	 *
@@ -29991,7 +30011,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-
+	
 	/**
 	 * This is the common logic for both the Node.js and web browser
 	 * implementations of `debug()`.
@@ -31254,7 +31274,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 13 */
 /***/ function(module, exports) {
 
-
+	
 	/**
 	 * Expose `Emitter`.
 	 */
@@ -32168,7 +32188,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-
+	
 	module.exports = __webpack_require__(19);
 
 
@@ -32176,7 +32196,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-
+	
 	module.exports = __webpack_require__(20);
 
 	/**
@@ -33041,7 +33061,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 23 */
 /***/ function(module, exports) {
 
-
+	
 	/**
 	 * Module exports.
 	 *
@@ -34525,7 +34545,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 28 */
 /***/ function(module, exports) {
 
-
+	
 	/**
 	 * Gets the keys for an object.
 	 *
@@ -35100,7 +35120,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
-
+	
 	/**
 	 * Expose `Emitter`.
 	 */
@@ -35312,7 +35332,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 37 */
 /***/ function(module, exports) {
 
-
+	
 	module.exports = function(a, b){
 	  var fn = function(){};
 	  fn.prototype = b.prototype;
@@ -35934,7 +35954,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 42 */
 /***/ function(module, exports) {
 
-
+	
 	var indexOf = [].indexOf;
 
 	module.exports = function(arr, obj){
@@ -36486,7 +36506,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 48 */
 /***/ function(module, exports) {
 
-
+	
 	/**
 	 * Expose `Backoff`.
 	 */

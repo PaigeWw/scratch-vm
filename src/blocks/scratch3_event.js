@@ -57,9 +57,7 @@ class Scratch3EventBlocks {
 
     broadcast (args, util) {
         const broadcastOption = Cast.toString(args.BROADCAST_OPTION);
-        if(broadcastOption == 'new message') {
 
-        }
         util.startHats('event_whenbroadcastreceived', {
             BROADCAST_OPTION: broadcastOption
         });

@@ -1050,6 +1050,10 @@ class Runtime extends EventEmitter {
             this._step();
         }, interval);
     }
+    createMsgPrompt () {
+        console.log('createMsgPrompt');
+        return;
+    }
 }
 
 module.exports = Runtime;

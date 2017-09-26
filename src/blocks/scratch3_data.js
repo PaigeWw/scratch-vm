@@ -30,7 +30,7 @@ class Scratch3DataBlocks {
     }
 
     getVariable (args, util) {
-        const variable = util.target.lookupOrCreateVariable(args.VARIABLE);
+        const variable = util.target.lookupOrCreateVariable(args.VARIABLE,'get');
         return variable.value;
     }
 

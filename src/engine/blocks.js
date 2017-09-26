@@ -190,6 +190,20 @@ class Blocks {
     blocklyListen (e, optRuntime) {
         // Validate event
         if (typeof e !== 'object') return;
+        if(e.type == 'var_delete'){
+            const stage = optRuntime.getTargetForStage();
+            if (stage.variables.hasOwnProperty(e.varName)) {
+                delete stage.variables[e.varName];
+                optRuntime.requestRemoveMonitor(e.varId);
+            }
+        }
+        if(e.type == 'msg_create'){
+            console.log('e.type == msg_create',e);
+            const stage = optRuntime.getTargetForStage();
+            optRuntime.createMsgPrompt(function (msgName) {
+                stage.messages.push([msgName,msgName]);
+            })
+        }
         if (typeof e.blockId !== 'string') return;
 
         // UI event: clicked scripts toggle in the runtime.
@@ -343,7 +357,7 @@ class Blocks {
             // Remove script, if one exists.
             this._deleteScript(e.id);
             // Otherwise, try to connect it in its new place.
-            if (typeof e.newInput === 'undefined') {
+            if (typeof e.newInput === '.') {
                 // Moved to the new parent's next connection.
                 this._blocks[e.newParent].next = e.id;
             } else {
