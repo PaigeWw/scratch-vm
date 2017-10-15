@@ -4,6 +4,8 @@ class Mouse {
     constructor (runtime) {
         this._x = 0;
         this._y = 0;
+        this._mx = 0;
+        this._my = 0;
         this._isDown = false;
         /**
          * Reference to the owning Runtime.
@@ -39,11 +41,14 @@ class Mouse {
      * @param  {object} data Data from DOM event.
      */
     postData (data) {
+        const nativeSize = this.runtime.renderer.getNativeSize();
         if (data.x) {
-            this._x = data.x - data.canvasWidth / 2;
+            this._x = (nativeSize[0] /  data.canvasWidth ) * (data.x - ( data.canvasWidth  / 2)),
+            this._mx = data.x - nativeSize[0]/2;
         }
         if (data.y) {
-            this._y = data.y - data.canvasHeight / 2;
+            this._y = (nativeSize[1] / data.canvasHeight) * (data.y - (data.canvasHeight / 2))
+            this._my = data.y - nativeSize[1]/2;
         }
         if (typeof data.isDown !== 'undefined') {
             this._isDown = data.isDown;
@@ -67,6 +72,22 @@ class Mouse {
      */
     getY () {
         return MathUtil.clamp(-this._y, -400, 400);
+    }
+
+    /**
+     * Get the X position of the mouse.
+     * @return {number} Clamped X position of the mouse cursor.
+     */
+        getMX () {
+        return MathUtil.clamp(this._mx, -240, 240);
+    }
+
+    /**
+     * Get the Y position of the mouse.
+     * @return {number} Clamped Y position of the mouse cursor.
+     */
+    getMY () {
+        return MathUtil.clamp(-this._my, -400, 400);
     }
 
     /**

@@ -82,15 +82,17 @@ class Target extends EventEmitter {
             return this.variables[name];
         }
         // If the stage has a global copy, return it.
+
+        //现在的变量全部定义在 stage 上，为全局变量
+        const stage = this.runtime.getTargetForStage();
         if (this.runtime && !this.isStage) {
-            const stage = this.runtime.getTargetForStage();
             if (stage.variables.hasOwnProperty(name)) {
                 return stage.variables[name];
             }
         }
         // No variable with this name exists - create it locally.
         const newVariable = new Variable(name, 0, false);
-        this.variables[name] = newVariable;
+        stage.variables[name] = newVariable;
         return newVariable;
     }
 

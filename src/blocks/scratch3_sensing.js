@@ -35,8 +35,8 @@ class Scratch3SensingBlocks {
     touchingObject (args, util) {
         const requestedObject = args.TOUCHINGOBJECTMENU;
         if (requestedObject === '_mouse_') {
-            const mouseX = util.ioQuery('mouse', 'getX');
-            const mouseY = util.ioQuery('mouse', 'getY');
+            const mouseX = util.ioQuery('mouse', 'getMX');
+            const mouseY = util.ioQuery('mouse', 'getMY');
             return util.target.isTouchingPoint(mouseX, mouseY);
         } else if (requestedObject === '_edge_') {
             return util.target.isTouchingEdge();

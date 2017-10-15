@@ -22696,8 +22696,8 @@ var Scratch3SensingBlocks = function () {
         value: function touchingObject(args, util) {
             var requestedObject = args.TOUCHINGOBJECTMENU;
             if (requestedObject === '_mouse_') {
-                var mouseX = util.ioQuery('mouse', 'getX');
-                var mouseY = util.ioQuery('mouse', 'getY');
+                var mouseX = util.ioQuery('mouse', 'getMX');
+                var mouseY = util.ioQuery('mouse', 'getMY');
                 return util.target.isTouchingPoint(mouseX, mouseY);
             } else if (requestedObject === '_edge_') {
                 return util.target.isTouchingEdge();
@@ -26284,15 +26284,17 @@ var Target = function (_EventEmitter) {
         return this.variables[name];
       }
       // If the stage has a global copy, return it.
+
+      //现在的变量全部定义在 stage 上，为全局变量
+      var stage = this.runtime.getTargetForStage();
       if (this.runtime && !this.isStage) {
-        var stage = this.runtime.getTargetForStage();
         if (stage.variables.hasOwnProperty(name)) {
           return stage.variables[name];
         }
       }
       // No variable with this name exists - create it locally.
       var newVariable = new Variable(name, 0, false);
-      this.variables[name] = newVariable;
+      stage.variables[name] = newVariable;
       return newVariable;
     }
 
@@ -27063,6 +27065,8 @@ var Mouse = function () {
 
         this._x = 0;
         this._y = 0;
+        this._mx = 0;
+        this._my = 0;
         this._isDown = false;
         /**
          * Reference to the owning Runtime.
@@ -27103,11 +27107,13 @@ var Mouse = function () {
     }, {
         key: 'postData',
         value: function postData(data) {
+            var nativeSize = this.runtime.renderer.getNativeSize();
             if (data.x) {
-                this._x = data.x - data.canvasWidth / 2;
+                this._x = nativeSize[0] / data.canvasWidth * (data.x - data.canvasWidth / 2), this._mx = data.x - nativeSize[0] / 2;
             }
             if (data.y) {
-                this._y = data.y - data.canvasHeight / 2;
+                this._y = nativeSize[1] / data.canvasHeight * (data.y - data.canvasHeight / 2);
+                this._my = data.y - nativeSize[1] / 2;
             }
             if (typeof data.isDown !== 'undefined') {
                 this._isDown = data.isDown;
@@ -27137,6 +27143,28 @@ var Mouse = function () {
         key: 'getY',
         value: function getY() {
             return MathUtil.clamp(-this._y, -400, 400);
+        }
+
+        /**
+         * Get the X position of the mouse.
+         * @return {number} Clamped X position of the mouse cursor.
+         */
+
+    }, {
+        key: 'getMX',
+        value: function getMX() {
+            return MathUtil.clamp(this._mx, -240, 240);
+        }
+
+        /**
+         * Get the Y position of the mouse.
+         * @return {number} Clamped Y position of the mouse cursor.
+         */
+
+    }, {
+        key: 'getMY',
+        value: function getMY() {
+            return MathUtil.clamp(-this._my, -400, 400);
         }
 
         /**
@@ -31829,7 +31857,7 @@ module.exports = {
 	"_args": [
 		[
 			"got@5.7.1",
-			"C:\\Users\\Wyp\\WebstormProjects\\mxc-gui-pad\\node_modules\\scratch-vm"
+			"C:\\Users\\Wyp\\WebstormProjects\\gui-pad\\mxc-gui\\node_modules\\scratch-vm"
 		]
 	],
 	"_from": "got@5.7.1",
@@ -31853,7 +31881,7 @@ module.exports = {
 	],
 	"_resolved": "https://registry.npmjs.org/got/-/got-5.7.1.tgz",
 	"_spec": "5.7.1",
-	"_where": "C:\\Users\\Wyp\\WebstormProjects\\mxc-gui-pad\\node_modules\\scratch-vm",
+	"_where": "C:\\Users\\Wyp\\WebstormProjects\\gui-pad\\mxc-gui\\node_modules\\scratch-vm",
 	"browser": {
 		"unzip-response": false
 	},

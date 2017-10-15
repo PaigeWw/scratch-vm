@@ -25691,7 +25691,7 @@ module.exports = {
 	"_args": [
 		[
 			"elliptic@6.4.0",
-			"C:\\Users\\Wyp\\WebstormProjects\\mxc-gui-pad\\node_modules\\scratch-vm"
+			"C:\\Users\\Wyp\\WebstormProjects\\gui-pad\\mxc-gui\\node_modules\\scratch-vm"
 		]
 	],
 	"_from": "elliptic@6.4.0",
@@ -25713,7 +25713,7 @@ module.exports = {
 	"_requiredBy": [],
 	"_resolved": "https://registry.npmjs.org/elliptic/-/elliptic-6.4.0.tgz",
 	"_spec": "6.4.0",
-	"_where": "C:\\Users\\Wyp\\WebstormProjects\\mxc-gui-pad\\node_modules\\scratch-vm",
+	"_where": "C:\\Users\\Wyp\\WebstormProjects\\gui-pad\\mxc-gui\\node_modules\\scratch-vm",
 	"author": {
 		"name": "Fedor Indutny",
 		"email": "fedor@indutny.com"
