@@ -436,6 +436,7 @@ const parseBlock = function (sb2block) {
     if (oldOpcode === 'stopScripts') {
         // Mutation for stop block: if the argument is 'other scripts',
         // the block needs a next connection.
+
         if (sb2block[1] === 'other scripts in sprite' ||
             sb2block[1] === 'other scripts in stage') {
             activeBlock.mutation = {

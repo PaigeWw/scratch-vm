@@ -112,7 +112,11 @@ class Scratch3PenBlocks {
             this.runtime.renderer.setDrawableOrder(this._penDrawableId, Scratch3PenBlocks.PEN_ORDER);
             this.runtime.renderer.updateDrawableProperties(this._penDrawableId, {skinId: this._penSkinId});
         }
+        // console.log('_penSkinId--->',this._penSkinId);
         return this._penSkinId;
+        // var penSkinId = this.runtime.renderer.getPenSkinId();
+        // this.runtime.renderer.setDrawableOrder(penSkinId, Scratch3PenBlocks.PEN_ORDER);
+        // return penSkinId;
     }
 
     /**

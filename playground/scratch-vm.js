@@ -19237,6 +19237,7 @@ var mutatorTagToObject = function mutatorTagToObject(dom) {
  * @return {object} Object representing the mutation.
  */
 var mutationAdpater = function mutationAdpater(mutation) {
+    console.log(mutation);
     var mutationParsed = void 0;
     // Check if the mutation is already parsed; if not, parse it.
     if ((typeof mutation === 'undefined' ? 'undefined' : _typeof(mutation)) === 'object') {
@@ -22230,7 +22231,11 @@ var Scratch3PenBlocks = function () {
                 this.runtime.renderer.setDrawableOrder(this._penDrawableId, Scratch3PenBlocks.PEN_ORDER);
                 this.runtime.renderer.updateDrawableProperties(this._penDrawableId, { skinId: this._penSkinId });
             }
+            // console.log('_penSkinId--->',this._penSkinId);
             return this._penSkinId;
+            // var penSkinId = this.runtime.renderer.getPenSkinId();
+            // this.runtime.renderer.setDrawableOrder(penSkinId, Scratch3PenBlocks.PEN_ORDER);
+            // return penSkinId;
         }
 
         /**
@@ -22960,13 +22965,11 @@ var Scratch3SoundBlocks = function () {
     }, {
         key: 'playSoundAndWait',
         value: function playSoundAndWait(args, util) {
-            console.log('--------playSoundAndWait----------');
             var index = this._getSoundIndex(args.SOUND_MENU, util);
             console.log('index:', index);
             if (index >= 0) {
                 var soundId = util.target.sprite.sounds[index].soundId;
                 if (util.target.audioPlayer === null) return;
-                console.log('调用了audioPlayer.playSound');
                 return util.target.audioPlayer.playSound(soundId);
             }
         }
@@ -24563,6 +24566,8 @@ var execute = function execute(sequencer, thread) {
         thread.requestScriptGlowInFrame = true;
     }
 
+    //play_sound  播放声音积木（运行状态直到声音播放完毕，但其后面的积木不等待）
+
     // If it's a promise, wait until promise resolves.
     if (isPromise(primitiveReportedValue)) {
         if (thread.status === Thread.STATUS_RUNNING) {
@@ -24635,6 +24640,8 @@ module.exports = MonitorRecord;
 
 "use strict";
 
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -25072,6 +25079,31 @@ var Runtime = function (_EventEmitter) {
                 updateMonitor: false
             }, opts);
             // Remove any existing thread.
+
+            var topBlock = this._editingTarget.blocks.getBlock(topBlockId);
+            if (topBlock.opcode === "sound_play") {
+
+                var topInputs = this._editingTarget.blocks.getInputs(topBlock);
+                var fileBlock = this._editingTarget.blocks.getBlock(topInputs.SOUND_MENU.block);
+                var soundName = fileBlock.fields.SOUND_MENU.value;
+
+                var soundIndex = -1;
+                var sounds = this._editingTarget.sprite.sounds;
+                for (var _i = 0; _i < sounds.length; _i++) {
+                    if (sounds[_i].name === soundName) {
+                        soundIndex = _i;
+                    }
+                }
+                // if there is no sound by that name, return -1
+                if (soundIndex >= 0) {
+                    var soundId = this._editingTarget.sprite.sounds[soundIndex].soundId;
+                    if (this._editingTarget.audioPlayer !== null && this._editingTarget.audioPlayer.activeSoundPlayers[soundId] && this._editingTarget.audioPlayer.activeSoundPlayers[soundId].isPlaying) {
+                        this._editingTarget.audioPlayer.stopSound(soundId);
+                        return;
+                    }
+                }
+            }
+            // Remove any existing thread.
             for (var i = 0; i < this.threads.length; i++) {
                 if (this.threads[i].topBlock === topBlockId) {
                     this._removeThread(this.threads[i]);
@@ -25288,6 +25320,22 @@ var Runtime = function (_EventEmitter) {
             }
         }
 
+        //判断当前是否有声音在播放
+
+    }, {
+        key: 'isSoundPlaying',
+        value: function isSoundPlaying() {
+            for (var i = 0; i < this.targets.length; i++) {
+                var activeSoundPlayers = this.targets[i].audioPlayer.activeSoundPlayers;
+                if ((typeof activeSoundPlayers === 'undefined' ? 'undefined' : _typeof(activeSoundPlayers)) == 'object') {
+                    for (var prop in activeSoundPlayers) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+
         /**
          * Repeatedly run `sequencer.stepThreads` and filter out
          * inactive threads after each iteration.
@@ -25454,11 +25502,11 @@ var Runtime = function (_EventEmitter) {
     }, {
         key: '_emitProjectRunStatus',
         value: function _emitProjectRunStatus(nonMonitorThreadCount) {
-            if (this._nonMonitorThreadCount === 0 && nonMonitorThreadCount > 0) {
-                this.emit(Runtime.PROJECT_RUN_START);
-            }
             if (this._nonMonitorThreadCount > 0 && nonMonitorThreadCount === 0) {
                 this.emit(Runtime.PROJECT_RUN_STOP);
+            }
+            if (this._nonMonitorThreadCount === 0 && nonMonitorThreadCount > 0) {
+                this.emit(Runtime.PROJECT_RUN_START);
             }
             this._nonMonitorThreadCount = nonMonitorThreadCount;
         }
@@ -27607,6 +27655,7 @@ var parseBlock = function parseBlock(sb2block) {
     if (oldOpcode === 'stopScripts') {
         // Mutation for stop block: if the argument is 'other scripts',
         // the block needs a next connection.
+
         if (sb2block[1] === 'other scripts in sprite' || sb2block[1] === 'other scripts in stage') {
             activeBlock.mutation = {
                 tagName: 'mutation',
@@ -29138,6 +29187,7 @@ var VirtualMachine = function (_EventEmitter) {
     }, {
         key: 'clear',
         value: function clear() {
+            console.log('-----------vm--clear-----------');
             this.runtime.dispose();
             this.editingTarget = null;
             this.emitTargetsUpdate();
@@ -29196,6 +29246,8 @@ var VirtualMachine = function (_EventEmitter) {
         key: 'loadProject',
         value: function loadProject(json) {
             // @todo: Handle other formats, e.g., Scratch 1.4, Scratch 3.0.
+            // console.log('------------pData--------------');
+            // console.log(json);
             var result = this.fromJSON(json);
             return result;
         }
@@ -29255,7 +29307,8 @@ var VirtualMachine = function (_EventEmitter) {
 
             // Clear the current runtime
             this.clear();
-
+            // this.runtime.renderer._allSkins = [];
+            // this.runtime.renderer._penSkinId = -1;
             // Validate & parse
             if (typeof json !== 'string') {
                 log.error('Failed to parse project. Non-string supplied to fromJSON.');
@@ -29283,6 +29336,11 @@ var VirtualMachine = function (_EventEmitter) {
                 _this2.clear();
                 for (var n = 0; n < targets.length; n++) {
                     if (targets[n] !== null) {
+                        for (var i in targets[n].blocks._blocks) {
+                            if (targets[n].blocks._blocks[i].opcode == 'control_stop' && targets[n].blocks._blocks[i].fields.STOP_OPTION.value == 'other scripts in sprite') {
+                                targets[n].blocks._blocks[i].mutation.hasnext = 'true';
+                            }
+                        }
                         _this2.runtime.targets.push(targets[n]);
                         targets[n].updateAllDrawableProperties();
                     }
@@ -29828,7 +29886,8 @@ var VirtualMachine = function (_EventEmitter) {
         key: 'emitWorkspaceUpdate',
         value: function emitWorkspaceUpdate() {
             // @todo Include variables scoped to editing target also.
-            var variableMap = this.runtime.getTargetForStage().variables;
+            var stage = this.runtime.getTargetForStage();
+            var variableMap = Object.assign({}, this.runtime.getTargetForStage().variables, this.editingTarget.variables);
 
             var variables = Object.keys(variableMap).map(function (k) {
                 return variableMap[k];
@@ -29837,7 +29896,6 @@ var VirtualMachine = function (_EventEmitter) {
             var xmlString = '<xml xmlns="http://www.w3.org/1999/xhtml">\n                            <variables>\n                                ' + variables.map(function (v) {
                 return v.toXML();
             }).join() + '\n                            </variables>\n                            ' + this.editingTarget.blocks.toXML() + '\n                        </xml>';
-
             this.emit('workspaceUpdate', { xml: xmlString });
         }
 

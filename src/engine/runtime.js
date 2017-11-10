@@ -477,7 +477,32 @@ class Runtime extends EventEmitter {
             updateMonitor: false
         }, opts);
         // Remove any existing thread.
-        for (let i = 0; i < this.threads.length; i++) {
+
+        var topBlock = this._editingTarget.blocks.getBlock(topBlockId);
+        if(topBlock.opcode === "sound_play"){
+
+            var topInputs = this._editingTarget.blocks.getInputs(topBlock);
+            var fileBlock = this._editingTarget.blocks.getBlock(topInputs.SOUND_MENU.block);
+            var soundName = fileBlock.fields.SOUND_MENU.value;
+
+            var soundIndex = -1;
+            const sounds = this._editingTarget.sprite.sounds;
+            for (let i = 0; i < sounds.length; i++) {
+                if (sounds[i].name === soundName) {
+                    soundIndex = i;
+                }
+            }
+            // if there is no sound by that name, return -1
+            if (soundIndex >= 0) {
+                const soundId = this._editingTarget.sprite.sounds[soundIndex].soundId;
+                if (this._editingTarget.audioPlayer !== null&&this._editingTarget.audioPlayer.activeSoundPlayers[soundId]&&this._editingTarget.audioPlayer.activeSoundPlayers[soundId].isPlaying) {
+                    this._editingTarget.audioPlayer.stopSound(soundId);
+                    return;
+                }
+            }
+        }
+        // Remove any existing thread.
+        for (var i = 0; i < this.threads.length; i++) {
             if (this.threads[i].topBlock === topBlockId) {
                 this._removeThread(this.threads[i]);
                 return;
@@ -677,6 +702,19 @@ class Runtime extends EventEmitter {
         }
     }
 
+    //判断当前是否有声音在播放
+    isSoundPlaying(){
+        for (let i = 0; i < this.targets.length; i++) {
+            var activeSoundPlayers = this.targets[i].audioPlayer.activeSoundPlayers;
+            if (typeof activeSoundPlayers == 'object'){
+                for (var prop in activeSoundPlayers){
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
     /**
      * Repeatedly run `sequencer.stepThreads` and filter out
      * inactive threads after each iteration.
@@ -826,11 +864,11 @@ class Runtime extends EventEmitter {
      * @param {number} nonMonitorThreadCount The new nonMonitorThreadCount
      */
     _emitProjectRunStatus (nonMonitorThreadCount) {
-        if (this._nonMonitorThreadCount === 0 && nonMonitorThreadCount > 0) {
-            this.emit(Runtime.PROJECT_RUN_START);
-        }
         if (this._nonMonitorThreadCount > 0 && nonMonitorThreadCount === 0) {
             this.emit(Runtime.PROJECT_RUN_STOP);
+        }
+        if (this._nonMonitorThreadCount === 0 && nonMonitorThreadCount > 0) {
+            this.emit(Runtime.PROJECT_RUN_START);
         }
         this._nonMonitorThreadCount = nonMonitorThreadCount;
     }

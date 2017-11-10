@@ -229,6 +229,8 @@ const execute = function (sequencer, thread) {
         thread.requestScriptGlowInFrame = true;
     }
 
+    //play_sound  播放声音积木（运行状态直到声音播放完毕，但其后面的积木不等待）
+
     // If it's a promise, wait until promise resolves.
     if (isPromise(primitiveReportedValue)) {
         if (thread.status === Thread.STATUS_RUNNING) {

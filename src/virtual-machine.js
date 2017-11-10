@@ -108,6 +108,7 @@ class VirtualMachine extends EventEmitter {
      * Clear out current running project data.
      */
     clear () {
+        console.log('-----------vm--clear-----------');
         this.runtime.dispose();
         this.editingTarget = null;
         this.emitTargetsUpdate();
@@ -153,6 +154,8 @@ class VirtualMachine extends EventEmitter {
      */
     loadProject (json) {
         // @todo: Handle other formats, e.g., Scratch 1.4, Scratch 3.0.
+        // console.log('------------pData--------------');
+        // console.log(json);
         let result = this.fromJSON(json);
         return result;
     }
@@ -198,7 +201,8 @@ class VirtualMachine extends EventEmitter {
     fromJSON (json) {
         // Clear the current runtime
         this.clear();
-
+        // this.runtime.renderer._allSkins = [];
+        // this.runtime.renderer._penSkinId = -1;
         // Validate & parse
         if (typeof json !== 'string') {
             log.error('Failed to parse project. Non-string supplied to fromJSON.');
@@ -226,6 +230,11 @@ class VirtualMachine extends EventEmitter {
             this.clear();
             for (let n = 0; n < targets.length; n++) {
                 if (targets[n] !== null) {
+                    for (let i in targets[n].blocks._blocks) {
+                        if(targets[n].blocks._blocks[i].opcode == 'control_stop'&&targets[n].blocks._blocks[i].fields.STOP_OPTION.value == 'other scripts in sprite'){
+                            targets[n].blocks._blocks[i].mutation.hasnext = 'true';
+                        }
+                    }
                     this.runtime.targets.push(targets[n]);
                     targets[n].updateAllDrawableProperties();
                 }
@@ -678,7 +687,11 @@ class VirtualMachine extends EventEmitter {
      */
     emitWorkspaceUpdate () {
         // @todo Include variables scoped to editing target also.
-        const variableMap = this.runtime.getTargetForStage().variables;
+        var stage = this.runtime.getTargetForStage();
+        const variableMap = Object.assign({},
+            this.runtime.getTargetForStage().variables,
+            this.editingTarget.variables
+        );
 
         const variables = Object.keys(variableMap).map(k => variableMap[k]);
 
@@ -688,7 +701,6 @@ class VirtualMachine extends EventEmitter {
                             </variables>
                             ${this.editingTarget.blocks.toXML()}
                         </xml>`;
-
         this.emit('workspaceUpdate', {xml: xmlString});
     }
 
