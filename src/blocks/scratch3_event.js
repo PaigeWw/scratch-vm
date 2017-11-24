@@ -51,6 +51,8 @@ class Scratch3EventBlocks {
         // @todo: Other cases :)
         if (option === 'timer') {
             return util.ioQuery('clock', 'projectTimer') > value;
+        }else if(option === 'loudness'){
+            return this.runtime.audioEngine.getLoudness() > value;
         }
         return false;
     }

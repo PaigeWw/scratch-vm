@@ -119,7 +119,43 @@ class Target extends EventEmitter {
         this.lists[name] = newList;
         return newList;
     }
+    renameVariable (id, newName) {
+        if (this.variables.hasOwnProperty(id)) {
+            const variable = this.variables[id];
+            if (variable.id === id) {
+                variable.name = newName;
 
+                if (this.runtime) {
+                    const blocks = this.runtime.monitorBlocks;
+                    blocks.changeBlock({
+                        id: id,
+                        element: 'field',
+                        name: 'VARIABLE',
+                        value: id
+                    }, this.runtime);
+                    this.runtime.requestUpdateMonitor(Map({
+                        id: id,
+                        params: blocks._getBlockParams(blocks.getBlock(variable.id))
+                    }));
+                }
+                variable.id = newName;
+            }
+        }
+    }
+
+    /**
+     * Removes the variable with the given id from the dictionary of variables.
+     * @param {string} id Id of renamed variable.
+     */
+    deleteVariable (id) {
+        if (this.variables.hasOwnProperty(id)) {
+            delete this.variables[id];
+            if (this.runtime) {
+                this.runtime.monitorBlocks.deleteBlock(id);
+                this.runtime.requestRemoveMonitor(id);
+            }
+        }
+    }
     /**
      * Post/edit sprite info.
      * @param {object} data An object with sprite info data to set.

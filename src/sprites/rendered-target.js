@@ -60,6 +60,8 @@ class RenderedTarget extends Target {
          */
         this.isOriginal = true;
 
+        this.isplug = false;
+
         /**
          * Whether this rendered target represents the Scratch stage.
          * @type {boolean}
@@ -200,6 +202,24 @@ class RenderedTarget extends Target {
         this.runtime.requestTargetsUpdate(this);
     }
 
+    //直接位置
+    setPosition (x, y) {
+        if (this.isStage) return;
+        const oldX = this.x;
+        const oldY = this.y;
+
+        this.x = x;
+        this.y = y;
+
+        this.renderer.updateDrawableProperties(this.drawableID, {
+            position: [x,y]
+        });
+
+        this.runtime.requestRedraw();
+
+        this.emit(RenderedTarget.EVENT_TARGET_MOVED, this, oldX, oldY);
+        this.runtime.requestTargetsUpdate(this);
+    }
     /**
      * Get the rendered direction and scale, after applying rotation style.
      * @return {object<string, number>} Direction and scale to render.
@@ -322,6 +342,44 @@ class RenderedTarget extends Target {
         }
     }
 
+
+    /**
+     * Set size, as a percentage of the costume size.
+     * @param {!number} size Size of rendered target, as % of costume size.
+     */
+    setRotationCenter (x,y) {
+        if (this.isStage) {
+            return;
+        }
+        if (this.renderer) {
+            // // Clamp to scales relative to costume and stage size.
+            // // See original ScratchSprite.as:setSize.
+            // const costumeSize = this.renderer.getSkinSize(this.drawableID);
+            // const origW = costumeSize[0];
+            // const origH = costumeSize[1];
+            // const minScale = Math.min(1, Math.max(5 / origW, 5 / origH));
+            // const maxScale = Math.min(
+            //     (1.5 * this.runtime.constructor.STAGE_WIDTH) / origW,
+            //     (1.5 * this.runtime.constructor.STAGE_HEIGHT) / origH
+            // );
+            // this.size = MathUtil.clamp(size / 100, minScale, maxScale) * 100;
+            // const renderedDirectionScale = this._getRenderedDirectionAndScale();
+            console.log('getBounds:',this.renderer.getBounds(this.drawableID));
+            var rotationCenter = this.renderer.getSkinRotationCenter(this.drawableID)
+            var x0 = this.x;
+            var y0 = this.y;
+            this.renderer.updateDrawableProperties(this.drawableID, {
+                // rotationCenter: [x-bounds.left,bounds.top-y],
+                rotationCenter: [x-(x0-rotationCenter[0]),y0+rotationCenter[1]-y]
+            });
+            // this.setPosition()
+
+            if (this.visible) {
+                this.runtime.requestRedraw();
+            }
+            this.runtime.requestTargetsUpdate(this);
+        }
+    }
     /**
      * Set a particular graphic effect value.
      * @param {!string} effectName Name of effect (see `RenderedTarget.prototype.effects`).

@@ -190,8 +190,15 @@ class Blocks {
     blocklyListen (e, optRuntime) {
         // Validate event
         if (typeof e !== 'object') return;
+        // if (typeof e.blockId !== 'string' && typeof e.varId !== 'string') {
+        //     return;
+        // }
+        const stage = optRuntime.getTargetForStage();
+        if(e.type == 'var_rename'){
+            stage.renameVariable(e.varName, e.newName);
+        }
+
         if(e.type == 'var_delete'){
-            const stage = optRuntime.getTargetForStage();
             if (stage.variables.hasOwnProperty(e.varName)) {
                 delete stage.variables[e.varName];
                 optRuntime.requestRemoveMonitor(e.varId);
@@ -213,7 +220,7 @@ class Blocks {
             }
             return;
         }
-
+        // console.log('e.type',e);
         // Block create/update/destroy
         switch (e.type) {
         case 'create': {

@@ -1,5 +1,5 @@
 const EventEmitter = require('events');
-
+// const Renderer = require('scratch-render');
 const log = require('./util/log');
 const Runtime = require('./engine/runtime');
 const sb2 = require('./serialization/sb2');
@@ -108,15 +108,13 @@ class VirtualMachine extends EventEmitter {
      * Clear out current running project data.
      */
     clear () {
-        console.log('-----------vm--clear-----------');
         this.runtime.dispose();
+        this.runtime.renderer.reset();
         this.editingTarget = null;
         this.emitTargetsUpdate();
     }
     newEmpty(){
-        this.clear();
         this.loadProject(ProjectLoader.DEFAULT_PROJECT_DATA);
-        // this.addCostume();
     }
     /**
      * Get data for playground. Data comes back in an emitted event.
@@ -227,7 +225,9 @@ class VirtualMachine extends EventEmitter {
         }
 
         return deserializer.deserialize(json, this.runtime).then(targets => {
-            this.clear();
+            // this.clear();
+            // console.log('-----targets------',targets)
+            // targets.splice(0,2);
             for (let n = 0; n < targets.length; n++) {
                 if (targets[n] !== null) {
                     for (let i in targets[n].blocks._blocks) {
@@ -563,7 +563,11 @@ class VirtualMachine extends EventEmitter {
                 // Ensure editing target is switched if we are deleting it.
                 if (clone === currentEditingTarget) {
                     const nextTargetIndex = Math.min(this.runtime.targets.length - 1, targetIndexBeforeDelete);
-                    this.setEditingTarget(this.runtime.targets[nextTargetIndex].id);
+                    if (this.runtime.targets.length > 0){
+                        this.setEditingTarget(this.runtime.targets[nextTargetIndex].id);
+                    } else {
+                        this.editingTarget = null;
+                    }
                 }
             }
             // Sprite object should be deleted by GC.
@@ -641,7 +645,7 @@ class VirtualMachine extends EventEmitter {
             return;
         }
         const target = this.runtime.getTargetById(targetId);
-        if (target) {
+        if (target && !target.isplug) {
             this.editingTarget = target;
             // Emit appropriate UI updates.
             this.emitTargetsUpdate();
@@ -672,7 +676,7 @@ class VirtualMachine extends EventEmitter {
             targetList: this.runtime.targets
                 .filter(
                     // Don't report clones.
-                    target => !target.hasOwnProperty('isOriginal') || target.isOriginal
+                    target => !!target||!target.hasOwnProperty('isOriginal') || target.isOriginal
                 ).map(
                     target => target.toJSON()
                 ),
@@ -688,12 +692,15 @@ class VirtualMachine extends EventEmitter {
     emitWorkspaceUpdate () {
         // @todo Include variables scoped to editing target also.
         var stage = this.runtime.getTargetForStage();
+        // const variableMap = Object.assign({},
+        //     this.runtime.getTargetForStage().variables,
+        //     this.editingTarget.variables
+        // );
         const variableMap = Object.assign({},
-            this.runtime.getTargetForStage().variables,
-            this.editingTarget.variables
+            this.runtime.getTargetForStage().variables
         );
-
         const variables = Object.keys(variableMap).map(k => variableMap[k]);
+        // console.log('stage-variables',variables);
 
         const xmlString = `<xml xmlns="http://www.w3.org/1999/xhtml">
                             <variables>
@@ -744,7 +751,10 @@ class VirtualMachine extends EventEmitter {
      * @param {object} data An object with sprite info data to set.
      */
     postSpriteInfo (data) {
-        this.editingTarget.postSpriteInfo(data);
+        if(!this.runtime.centerPointPlug.dragging){
+            this.editingTarget.postSpriteInfo(data);
+        } 
+        this.runtime.centerPointPlug.postSpriteInfo(data);
     }
 
     /**

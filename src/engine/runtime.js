@@ -3,6 +3,7 @@ const Sequencer = require('./sequencer');
 const Blocks = require('./blocks');
 const Thread = require('./thread');
 const {OrderedMap} = require('immutable');
+const SpritePlug = require('../sprites/sprite-plug');
 
 // Virtual I/O devices.
 const Clock = require('../io/clock');
@@ -47,6 +48,10 @@ class Runtime extends EventEmitter {
 
         /** @type {!Sequencer} */
         this.sequencer = new Sequencer(this);
+
+        // this.centerPointRenderedTarget = new RenderedTarget(this, this.runtime);
+
+        // this.sequencer = new Sequencer(this);
 
         /**
          * Storage container for flyout blocks.
@@ -479,7 +484,7 @@ class Runtime extends EventEmitter {
         // Remove any existing thread.
 
         var topBlock = this._editingTarget.blocks.getBlock(topBlockId);
-        if(topBlock.opcode === "sound_play"){
+        if (topBlock && topBlock.opcode && topBlock.opcode === "sound_play"){
 
             var topInputs = this._editingTarget.blocks.getInputs(topBlock);
             var fileBlock = this._editingTarget.blocks.getBlock(topInputs.SOUND_MENU.block);
@@ -637,6 +642,8 @@ class Runtime extends EventEmitter {
      * @param {!Target} disposingTarget Target to dispose of.
      */
     disposeTarget (disposingTarget) {
+        // console.log('disposingTarget',disposingTarget);
+
         this.targets = this.targets.filter(target => {
             if (disposingTarget !== target) return true;
 
@@ -693,6 +700,8 @@ class Runtime extends EventEmitter {
                 newTargets.push(this.targets[i]);
             }
         }
+        console.log('this.target',this.target);
+        console.log('newTargets',newTargets);
         this.targets = newTargets;
         // Dispose all threads.
         const threadsCopy = this.threads.slice();
@@ -779,12 +788,12 @@ class Runtime extends EventEmitter {
      * @param {!Target} editingTarget New editing target.
      */
     setEditingTarget (editingTarget) {
-        console.log('******************editingTarget***************:',editingTarget);
+        // getTargetById();
         this._editingTarget = editingTarget;
         // Script glows must be cleared.
         this._scriptGlowsPreviousFrame = [];
         this._updateGlows();
-        this.updateEditTargetBoxSkin(editingTarget);
+        this.updateEditTargetPlug(editingTarget);
         this.requestTargetsUpdate(editingTarget);
     }
 
@@ -961,14 +970,14 @@ class Runtime extends EventEmitter {
      * @param {string} targetId Id of target to find.
      * @return {?Target} The target, if found.
      */
-    copyTargetById (targetId) {
-        var target = this.getTargetById(targetId);
-        new RenderedTarget(target.sprite, this);
-
-        obj.id = uid();
-        obj.drawableID = this.renderer.createDrawable();
-        return target;
-    }
+    // copyTargetById (targetId) {
+    //     var target = this.getTargetById(targetId);
+    //     new RenderedTarget(target.sprite, this);
+    //
+    //     obj.id = uid();
+    //     obj.drawableID = this.renderer.createDrawable();
+    //     return target;
+    // }
     /**
      * Get a target by its id.
      * @param {string} targetId Id of target to find.
@@ -1043,6 +1052,7 @@ class Runtime extends EventEmitter {
      * @return {?Target} The target, if found.
      */
     getTargetForStage () {
+        // console.log(this.targets);
         for (let i = 0; i < this.targets.length; i++) {
             const target = this.targets[i];
             if (target.isStage) {
@@ -1072,8 +1082,13 @@ class Runtime extends EventEmitter {
     /**
      * 更新目标文件框
      */
-    updateEditTargetBoxSkin (editingTarget){
-        //this.renderer.updateEditTargetBoxSkin(editingTarget);
+    updateEditTargetPlug (editingTarget){
+        if(!this.spritePlug){
+            this.spritePlug = new SpritePlug(this);
+        }else if(!this.spritePlug.clones.length){
+           this.centerPointPlug =  this.spritePlug.createClone();
+           this.targets.push(this.centerPointPlug);
+       }
     }
     /**
      * Set up timers to repeatedly step in a browser.
@@ -1089,7 +1104,7 @@ class Runtime extends EventEmitter {
         }, interval);
     }
     createMsgPrompt () {
-        console.log('createMsgPrompt');
+        // console.log('createMsgPrompt');
         return;
     }
 }

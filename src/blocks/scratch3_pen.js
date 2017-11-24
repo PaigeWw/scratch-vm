@@ -106,17 +106,17 @@ class Scratch3PenBlocks {
      * @private
      */
     _getPenLayerID () {
-        if (this._penSkinId < 0 && this.runtime.renderer) {
-            this._penSkinId = this.runtime.renderer.createPenSkin();
-            this._penDrawableId = this.runtime.renderer.createDrawable();
-            this.runtime.renderer.setDrawableOrder(this._penDrawableId, Scratch3PenBlocks.PEN_ORDER);
-            this.runtime.renderer.updateDrawableProperties(this._penDrawableId, {skinId: this._penSkinId});
+        // if (this._penSkinId < 0 && this.runtime.renderer) {
+        //     this._penSkinId = this.runtime.renderer.createPenSkin();
+        //     this._penDrawableId = this.runtime.renderer.createDrawable();
+        //     this.runtime.renderer.setDrawableOrder(this._penDrawableId, Scratch3PenBlocks.PEN_ORDER);
+        //     this.runtime.renderer.updateDrawableProperties(this._penDrawableId, {skinId: this._penSkinId});
+        // }
+        // return this._penSkinId;
+        if (this.runtime.renderer) {
+            this._penSkinId = this.runtime.renderer.getPenSkinId();
         }
-        // console.log('_penSkinId--->',this._penSkinId);
         return this._penSkinId;
-        // var penSkinId = this.runtime.renderer.getPenSkinId();
-        // this.runtime.renderer.setDrawableOrder(penSkinId, Scratch3PenBlocks.PEN_ORDER);
-        // return penSkinId;
     }
 
     /**

@@ -133,7 +133,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Color = __webpack_require__(15);
+var Color = __webpack_require__(16);
 
 /**
  * @fileoverview
@@ -376,8 +376,8 @@ module.exports = Cast;
 
 
 
-var base64 = __webpack_require__(82)
-var ieee754 = __webpack_require__(110)
+var base64 = __webpack_require__(84)
+var ieee754 = __webpack_require__(112)
 var isArray = __webpack_require__(44)
 
 exports.Buffer = Buffer
@@ -2160,6 +2160,18 @@ function isnan (val) {
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var minilog = __webpack_require__(125);
+minilog.enable();
+
+module.exports = minilog('vm');
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -2467,10 +2479,10 @@ function isUndefined(arg) {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var microee = __webpack_require__(116);
+var microee = __webpack_require__(118);
 
 // Implements a subset of Node's stream.Transform - in a cross-platform manner.
 function Transform() {}
@@ -2545,32 +2557,121 @@ module.exports = Transform;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(47);
 exports.Stream = exports;
 exports.Readable = exports;
 exports.Writable = __webpack_require__(32);
-exports.Duplex = __webpack_require__(9);
+exports.Duplex = __webpack_require__(10);
 exports.Transform = __webpack_require__(48);
-exports.PassThrough = __webpack_require__(138);
+exports.PassThrough = __webpack_require__(140);
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var minilog = __webpack_require__(123);
-minilog.enable();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-module.exports = minilog('vm');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var MathUtil = function () {
+    function MathUtil() {
+        _classCallCheck(this, MathUtil);
+    }
+
+    _createClass(MathUtil, null, [{
+        key: "degToRad",
+
+        /**
+         * Convert a value from degrees to radians.
+         * @param {!number} deg Value in degrees.
+         * @return {!number} Equivalent value in radians.
+         */
+        value: function degToRad(deg) {
+            return deg * Math.PI / 180;
+        }
+
+        /**
+         * Convert a value from radians to degrees.
+         * @param {!number} rad Value in radians.
+         * @return {!number} Equivalent value in degrees.
+         */
+
+    }, {
+        key: "radToDeg",
+        value: function radToDeg(rad) {
+            return rad * 180 / Math.PI;
+        }
+
+        /**
+         * Clamp a number between two limits.
+         * If n < min, return min. If n > max, return max. Else, return n.
+         * @param {!number} n Number to clamp.
+         * @param {!number} min Minimum limit.
+         * @param {!number} max Maximum limit.
+         * @return {!number} Value of n clamped to min and max.
+         */
+
+    }, {
+        key: "clamp",
+        value: function clamp(n, min, max) {
+            return Math.min(Math.max(n, min), max);
+        }
+
+        /**
+         * Keep a number between two limits, wrapping "extra" into the range.
+         * e.g., wrapClamp(7, 1, 5) == 2
+         * wrapClamp(0, 1, 5) == 5
+         * wrapClamp(-11, -10, 6) == 6, etc.
+         * @param {!number} n Number to wrap.
+         * @param {!number} min Minimum limit.
+         * @param {!number} max Maximum limit.
+         * @return {!number} Value of n wrapped between min and max.
+         */
+
+    }, {
+        key: "wrapClamp",
+        value: function wrapClamp(n, min, max) {
+            var range = max - min + 1;
+            return n - Math.floor((n - min) / range) * range;
+        }
+
+        /**
+         * Convert a value from tan function in degrees.
+         * @param {!number} angle in degrees
+         * @return {!number} Correct tan value
+         */
+
+    }, {
+        key: "tan",
+        value: function tan(angle) {
+            angle = angle % 360;
+            switch (angle) {
+                case -270:
+                case 90:
+                    return Infinity;
+                case -90:
+                case 270:
+                    return -Infinity;
+                default:
+                    return parseFloat(Math.tan(Math.PI * angle / 180).toFixed(10));
+            }
+        }
+    }]);
+
+    return MathUtil;
+}();
+
+module.exports = MathUtil;
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -2760,7 +2861,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2794,7 +2895,7 @@ process.umask = function() { return 0; };
 
 /*<replacement>*/
 
-var processNextTick = __webpack_require__(17);
+var processNextTick = __webpack_require__(18);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -2809,7 +2910,7 @@ var objectKeys = Object.keys || function (obj) {
 module.exports = Duplex;
 
 /*<replacement>*/
-var util = __webpack_require__(13);
+var util = __webpack_require__(14);
 util.inherits = __webpack_require__(1);
 /*</replacement>*/
 
@@ -2890,182 +2991,7 @@ function forEach(xs, f) {
 }
 
 /***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var MathUtil = function () {
-    function MathUtil() {
-        _classCallCheck(this, MathUtil);
-    }
-
-    _createClass(MathUtil, null, [{
-        key: "degToRad",
-
-        /**
-         * Convert a value from degrees to radians.
-         * @param {!number} deg Value in degrees.
-         * @return {!number} Equivalent value in radians.
-         */
-        value: function degToRad(deg) {
-            return deg * Math.PI / 180;
-        }
-
-        /**
-         * Convert a value from radians to degrees.
-         * @param {!number} rad Value in radians.
-         * @return {!number} Equivalent value in degrees.
-         */
-
-    }, {
-        key: "radToDeg",
-        value: function radToDeg(rad) {
-            return rad * 180 / Math.PI;
-        }
-
-        /**
-         * Clamp a number between two limits.
-         * If n < min, return min. If n > max, return max. Else, return n.
-         * @param {!number} n Number to clamp.
-         * @param {!number} min Minimum limit.
-         * @param {!number} max Maximum limit.
-         * @return {!number} Value of n clamped to min and max.
-         */
-
-    }, {
-        key: "clamp",
-        value: function clamp(n, min, max) {
-            return Math.min(Math.max(n, min), max);
-        }
-
-        /**
-         * Keep a number between two limits, wrapping "extra" into the range.
-         * e.g., wrapClamp(7, 1, 5) == 2
-         * wrapClamp(0, 1, 5) == 5
-         * wrapClamp(-11, -10, 6) == 6, etc.
-         * @param {!number} n Number to wrap.
-         * @param {!number} min Minimum limit.
-         * @param {!number} max Maximum limit.
-         * @return {!number} Value of n wrapped between min and max.
-         */
-
-    }, {
-        key: "wrapClamp",
-        value: function wrapClamp(n, min, max) {
-            var range = max - min + 1;
-            return n - Math.floor((n - min) / range) * range;
-        }
-
-        /**
-         * Convert a value from tan function in degrees.
-         * @param {!number} angle in degrees
-         * @return {!number} Correct tan value
-         */
-
-    }, {
-        key: "tan",
-        value: function tan(angle) {
-            angle = angle % 360;
-            switch (angle) {
-                case -270:
-                case 90:
-                    return Infinity;
-                case -90:
-                case 270:
-                    return -Infinity;
-                default:
-                    return parseFloat(Math.tan(Math.PI * angle / 180).toFixed(10));
-            }
-        }
-    }]);
-
-    return MathUtil;
-}();
-
-module.exports = MathUtil;
-
-/***/ }),
 /* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var Parser = __webpack_require__(41),
-    DomHandler = __webpack_require__(88);
-
-function defineProp(name, value){
-	delete module.exports[name];
-	module.exports[name] = value;
-	return value;
-}
-
-module.exports = {
-	Parser: Parser,
-	Tokenizer: __webpack_require__(42),
-	ElementType: __webpack_require__(14),
-	DomHandler: DomHandler,
-	get FeedHandler(){
-		return defineProp("FeedHandler", __webpack_require__(106));
-	},
-	get Stream(){
-		return defineProp("Stream", __webpack_require__(108));
-	},
-	get WritableStream(){
-		return defineProp("WritableStream", __webpack_require__(43));
-	},
-	get ProxyHandler(){
-		return defineProp("ProxyHandler", __webpack_require__(107));
-	},
-	get DomUtils(){
-		return defineProp("DomUtils", __webpack_require__(90));
-	},
-	get CollectingHandler(){
-		return defineProp("CollectingHandler", __webpack_require__(105));
-	},
-	// For legacy support
-	DefaultHandler: DomHandler,
-	get RssHandler(){
-		return defineProp("RssHandler", this.FeedHandler);
-	},
-	//helper methods
-	parseDOM: function(data, options){
-		var handler = new DomHandler(options);
-		new Parser(handler, options).end(data);
-		return handler.dom;
-	},
-	parseFeed: function(feed, options){
-		var handler = new module.exports.FeedHandler(options);
-		new Parser(handler, options).end(feed);
-		return handler.dom;
-	},
-	createDomStream: function(cb, options, elementCb){
-		var handler = new DomHandler(cb, options, elementCb);
-		return new Parser(handler, options);
-	},
-	// List of all events that the parser emits
-	EVENTS: { /* Format: eventname: number of arguments */
-		attribute: 2,
-		cdatastart: 0,
-		cdataend: 0,
-		text: 1,
-		processinginstruction: 2,
-		comment: 1,
-		commentend: 0,
-		closetag: 1,
-		opentag: 2,
-		opentagname: 1,
-		error: 1,
-		end: 0
-	}
-};
-
-
-/***/ }),
-/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3079,7 +3005,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var adapter = __webpack_require__(67);
 var mutationAdapter = __webpack_require__(36);
-var xmlEscape = __webpack_require__(80);
+var xmlEscape = __webpack_require__(82);
 var MonitorRecord = __webpack_require__(69);
 
 /**
@@ -3300,8 +3226,15 @@ var Blocks = function () {
         value: function blocklyListen(e, optRuntime) {
             // Validate event
             if ((typeof e === 'undefined' ? 'undefined' : _typeof(e)) !== 'object') return;
+            // if (typeof e.blockId !== 'string' && typeof e.varId !== 'string') {
+            //     return;
+            // }
+            var stage = optRuntime.getTargetForStage();
+            if (e.type == 'var_rename') {
+                stage.renameVariable(e.varName, e.newName);
+            }
+
             if (e.type == 'var_delete') {
-                var stage = optRuntime.getTargetForStage();
                 if (stage.variables.hasOwnProperty(e.varName)) {
                     delete stage.variables[e.varName];
                     optRuntime.requestRemoveMonitor(e.varId);
@@ -3323,7 +3256,7 @@ var Blocks = function () {
                 }
                 return;
             }
-
+            // console.log('e.type',e);
             // Block create/update/destroy
             switch (e.type) {
                 case 'create':
@@ -3708,1035 +3641,81 @@ var Blocks = function () {
 module.exports = Blocks;
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer) {// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
+var Parser = __webpack_require__(41),
+    DomHandler = __webpack_require__(90);
 
-// NOTE: These type checking functions intentionally don't use `instanceof`
-// because it is fragile and can be easily faked with `Object.create()`.
-
-function isArray(arg) {
-  if (Array.isArray) {
-    return Array.isArray(arg);
-  }
-  return objectToString(arg) === '[object Array]';
-}
-exports.isArray = isArray;
-
-function isBoolean(arg) {
-  return typeof arg === 'boolean';
-}
-exports.isBoolean = isBoolean;
-
-function isNull(arg) {
-  return arg === null;
-}
-exports.isNull = isNull;
-
-function isNullOrUndefined(arg) {
-  return arg == null;
-}
-exports.isNullOrUndefined = isNullOrUndefined;
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-exports.isNumber = isNumber;
-
-function isString(arg) {
-  return typeof arg === 'string';
-}
-exports.isString = isString;
-
-function isSymbol(arg) {
-  return typeof arg === 'symbol';
-}
-exports.isSymbol = isSymbol;
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-exports.isUndefined = isUndefined;
-
-function isRegExp(re) {
-  return objectToString(re) === '[object RegExp]';
-}
-exports.isRegExp = isRegExp;
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-exports.isObject = isObject;
-
-function isDate(d) {
-  return objectToString(d) === '[object Date]';
-}
-exports.isDate = isDate;
-
-function isError(e) {
-  return (objectToString(e) === '[object Error]' || e instanceof Error);
-}
-exports.isError = isError;
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-exports.isFunction = isFunction;
-
-function isPrimitive(arg) {
-  return arg === null ||
-         typeof arg === 'boolean' ||
-         typeof arg === 'number' ||
-         typeof arg === 'string' ||
-         typeof arg === 'symbol' ||  // ES6 symbol
-         typeof arg === 'undefined';
-}
-exports.isPrimitive = isPrimitive;
-
-exports.isBuffer = Buffer.isBuffer;
-
-function objectToString(o) {
-  return Object.prototype.toString.call(o);
+function defineProp(name, value){
+	delete module.exports[name];
+	module.exports[name] = value;
+	return value;
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3).Buffer))
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports) {
-
-//Types of elements found in the DOM
 module.exports = {
-	Text: "text", //Text
-	Directive: "directive", //<? ... ?>
-	Comment: "comment", //<!-- ... -->
-	Script: "script", //<script> tags
-	Style: "style", //<style> tags
-	Tag: "tag", //Any tag
-	CDATA: "cdata", //<![CDATA[ ... ]]>
-	Doctype: "doctype",
-
-	isTag: function(elem){
-		return elem.type === "tag" || elem.type === "script" || elem.type === "style";
+	Parser: Parser,
+	Tokenizer: __webpack_require__(42),
+	ElementType: __webpack_require__(15),
+	DomHandler: DomHandler,
+	get FeedHandler(){
+		return defineProp("FeedHandler", __webpack_require__(108));
+	},
+	get Stream(){
+		return defineProp("Stream", __webpack_require__(110));
+	},
+	get WritableStream(){
+		return defineProp("WritableStream", __webpack_require__(43));
+	},
+	get ProxyHandler(){
+		return defineProp("ProxyHandler", __webpack_require__(109));
+	},
+	get DomUtils(){
+		return defineProp("DomUtils", __webpack_require__(92));
+	},
+	get CollectingHandler(){
+		return defineProp("CollectingHandler", __webpack_require__(107));
+	},
+	// For legacy support
+	DefaultHandler: DomHandler,
+	get RssHandler(){
+		return defineProp("RssHandler", this.FeedHandler);
+	},
+	//helper methods
+	parseDOM: function(data, options){
+		var handler = new DomHandler(options);
+		new Parser(handler, options).end(data);
+		return handler.dom;
+	},
+	parseFeed: function(feed, options){
+		var handler = new module.exports.FeedHandler(options);
+		new Parser(handler, options).end(feed);
+		return handler.dom;
+	},
+	createDomStream: function(cb, options, elementCb){
+		var handler = new DomHandler(cb, options, elementCb);
+		return new Parser(handler, options);
+	},
+	// List of all events that the parser emits
+	EVENTS: { /* Format: eventname: number of arguments */
+		attribute: 2,
+		cdatastart: 0,
+		cdataend: 0,
+		text: 1,
+		processinginstruction: 2,
+		comment: 1,
+		commentend: 0,
+		closetag: 1,
+		opentag: 2,
+		opentagname: 1,
+		error: 1,
+		end: 0
 	}
 };
 
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Color = function () {
-    function Color() {
-        _classCallCheck(this, Color);
-    }
-
-    _createClass(Color, null, [{
-        key: 'decimalToHex',
-
-
-        /**
-         * Convert a Scratch decimal color to a hex string, #RRGGBB.
-         * @param {number} decimal RGB color as a decimal.
-         * @return {string} RGB color as #RRGGBB hex string.
-         */
-        value: function decimalToHex(decimal) {
-            if (decimal < 0) {
-                decimal += 0xFFFFFF + 1;
-            }
-            var hex = Number(decimal).toString(16);
-            hex = '#' + '000000'.substr(0, 6 - hex.length) + hex;
-            return hex;
-        }
-
-        /**
-         * Convert a Scratch decimal color to an RGB color object.
-         * @param {number} decimal RGB color as decimal.
-         * @return {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-         */
-
-    }, {
-        key: 'decimalToRgb',
-        value: function decimalToRgb(decimal) {
-            var a = decimal >> 24 & 0xFF;
-            var r = decimal >> 16 & 0xFF;
-            var g = decimal >> 8 & 0xFF;
-            var b = decimal & 0xFF;
-            return { r: r, g: g, b: b, a: a > 0 ? a : 255 };
-        }
-
-        /**
-         * Convert a hex color (e.g., F00, #03F, #0033FF) to an RGB color object.
-         * CC-BY-SA Tim Down:
-         * https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-         * @param {!string} hex Hex representation of the color.
-         * @return {RGBObject} null on failure, or rgb: {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-         */
-
-    }, {
-        key: 'hexToRgb',
-        value: function hexToRgb(hex) {
-            var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-            hex = hex.replace(shorthandRegex, function (m, r, g, b) {
-                return r + r + g + g + b + b;
-            });
-            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? {
-                r: parseInt(result[1], 16),
-                g: parseInt(result[2], 16),
-                b: parseInt(result[3], 16)
-            } : null;
-        }
-
-        /**
-         * Convert an RGB color object to a hex color.
-         * @param {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-         * @return {!string} Hex representation of the color.
-         */
-
-    }, {
-        key: 'rgbToHex',
-        value: function rgbToHex(rgb) {
-            return Color.decimalToHex(Color.rgbToDecimal(rgb));
-        }
-
-        /**
-         * Convert an RGB color object to a Scratch decimal color.
-         * @param {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-         * @return {!number} Number representing the color.
-         */
-
-    }, {
-        key: 'rgbToDecimal',
-        value: function rgbToDecimal(rgb) {
-            return (rgb.r << 16) + (rgb.g << 8) + rgb.b;
-        }
-
-        /**
-        * Convert a hex color (e.g., F00, #03F, #0033FF) to a decimal color number.
-        * @param {!string} hex Hex representation of the color.
-        * @return {!number} Number representing the color.
-        */
-
-    }, {
-        key: 'hexToDecimal',
-        value: function hexToDecimal(hex) {
-            return Color.rgbToDecimal(Color.hexToRgb(hex));
-        }
-
-        /**
-         * Convert an HSV color to RGB format.
-         * @param {HSVObject} hsv - {h: hue [0,360), s: saturation [0,1], v: value [0,1]}
-         * @return {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-         */
-
-    }, {
-        key: 'hsvToRgb',
-        value: function hsvToRgb(hsv) {
-            var h = hsv.h % 360;
-            if (h < 0) h += 360;
-            var s = Math.max(0, Math.min(hsv.s, 1));
-            var v = Math.max(0, Math.min(hsv.v, 1));
-
-            var i = Math.floor(h / 60);
-            var f = h / 60 - i;
-            var p = v * (1 - s);
-            var q = v * (1 - s * f);
-            var t = v * (1 - s * (1 - f));
-
-            var r = void 0;
-            var g = void 0;
-            var b = void 0;
-
-            switch (i) {
-                default:
-                case 0:
-                    r = v;
-                    g = t;
-                    b = p;
-                    break;
-                case 1:
-                    r = q;
-                    g = v;
-                    b = p;
-                    break;
-                case 2:
-                    r = p;
-                    g = v;
-                    b = t;
-                    break;
-                case 3:
-                    r = p;
-                    g = q;
-                    b = v;
-                    break;
-                case 4:
-                    r = t;
-                    g = p;
-                    b = v;
-                    break;
-                case 5:
-                    r = v;
-                    g = p;
-                    b = q;
-                    break;
-            }
-
-            return {
-                r: Math.floor(r * 255),
-                g: Math.floor(g * 255),
-                b: Math.floor(b * 255)
-            };
-        }
-
-        /**
-         * Convert an RGB color to HSV format.
-         * @param {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-         * @return {HSVObject} hsv - {h: hue [0,360), s: saturation [0,1], v: value [0,1]}
-         */
-
-    }, {
-        key: 'rgbToHsv',
-        value: function rgbToHsv(rgb) {
-            var r = rgb.r / 255;
-            var g = rgb.g / 255;
-            var b = rgb.b / 255;
-            var x = Math.min(Math.min(r, g), b);
-            var v = Math.max(Math.max(r, g), b);
-
-            // For grays, hue will be arbitrarily reported as zero. Otherwise, calculate
-            var h = 0;
-            var s = 0;
-            if (x !== v) {
-                var f = r === x ? g - b : g === x ? b - r : r - g;
-                var i = r === x ? 3 : g === x ? 5 : 1;
-                h = (i - f / (v - x)) * 60 % 360;
-                s = (v - x) / v;
-            }
-
-            return { h: h, s: s, v: v };
-        }
-
-        /**
-         * Linear interpolation between rgb0 and rgb1.
-         * @param {RGBObject} rgb0 - the color corresponding to fraction1 <= 0.
-         * @param {RGBObject} rgb1 - the color corresponding to fraction1 >= 1.
-         * @param {number} fraction1 - the interpolation parameter. If this is 0.5, for example, mix the two colors equally.
-         * @return {RGBObject} the interpolated color.
-         */
-
-    }, {
-        key: 'mixRgb',
-        value: function mixRgb(rgb0, rgb1, fraction1) {
-            if (fraction1 <= 0) return rgb0;
-            if (fraction1 >= 1) return rgb1;
-            var fraction0 = 1 - fraction1;
-            return {
-                r: fraction0 * rgb0.r + fraction1 * rgb1.r,
-                g: fraction0 * rgb0.g + fraction1 * rgb1.g,
-                b: fraction0 * rgb0.b + fraction1 * rgb1.b
-            };
-        }
-    }, {
-        key: 'RGB_BLACK',
-
-        /**
-         * @typedef {object} RGBObject - An object representing a color in RGB format.
-         * @property {number} r - the red component, in the range [0, 255].
-         * @property {number} g - the green component, in the range [0, 255].
-         * @property {number} b - the blue component, in the range [0, 255].
-         */
-
-        /**
-         * @typedef {object} HSVObject - An object representing a color in HSV format.
-         * @property {number} h - hue, in the range [0-359).
-         * @property {number} s - saturation, in the range [0,1].
-         * @property {number} v - value, in the range [0,1].
-         */
-
-        /** @type {RGBObject} */
-        get: function get() {
-            return { r: 0, g: 0, b: 0 };
-        }
-
-        /** @type {RGBObject} */
-
-    }, {
-        key: 'RGB_WHITE',
-        get: function get() {
-            return { r: 255, g: 255, b: 255 };
-        }
-    }]);
-
-    return Color;
-}();
-
-module.exports = Color;
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * @fileoverview UID generator, from Blockly.
- */
-
-/**
- * Legal characters for the unique ID.
- * Should be all on a US keyboard.  No XML special characters or control codes.
- * Removed $ due to issue 251.
- * @private
- */
-var soup_ = '!#%()*+,-./:;=?@[]^_`{|}~' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-/**
- * Generate a unique ID, from Blockly.  This should be globally unique.
- * 87 characters ^ 20 length > 128 bits (better than a UUID).
- * @return {string} A globally unique ID string.
- */
-var uid = function uid() {
-  var length = 20;
-  var soupLength = soup_.length;
-  var id = [];
-  for (var i = 0; i < length; i++) {
-    id[i] = soup_.charAt(Math.random() * soupLength);
-  }
-  return id.join('');
-};
-
-module.exports = uid;
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-if (!process.version ||
-    process.version.indexOf('v0.') === 0 ||
-    process.version.indexOf('v1.') === 0 && process.version.indexOf('v1.8.') !== 0) {
-  module.exports = nextTick;
-} else {
-  module.exports = process.nextTick;
-}
-
-function nextTick(fn, arg1, arg2, arg3) {
-  if (typeof fn !== 'function') {
-    throw new TypeError('"callback" argument must be a function');
-  }
-  var len = arguments.length;
-  var args, i;
-  switch (len) {
-  case 0:
-  case 1:
-    return process.nextTick(fn);
-  case 2:
-    return process.nextTick(function afterTickOne() {
-      fn.call(null, arg1);
-    });
-  case 3:
-    return process.nextTick(function afterTickTwo() {
-      fn.call(null, arg1, arg2);
-    });
-  case 4:
-    return process.nextTick(function afterTickThree() {
-      fn.call(null, arg1, arg2, arg3);
-    });
-  default:
-    args = new Array(len - 1);
-    i = 0;
-    while (i < args.length) {
-      args[i++] = arguments[i];
-    }
-    return process.nextTick(function afterTick() {
-      fn.apply(null, args);
-    });
-  }
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * @fileoverview
- * Object representing a Scratch list.
- */
-
-/**
- * @param {!string} name Name of the list.
- * @param {Array} contents Contents of the list, as an array.
- * @constructor
- */
-var List = function List(name, contents) {
-    _classCallCheck(this, List);
-
-    this.name = name;
-    this.contents = contents;
-};
-
-module.exports = List;
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * A thread is a running stack context and all the metadata needed.
- * @param {?string} firstBlock First block to execute in the thread.
- * @constructor
- */
-var Thread = function () {
-    function Thread(firstBlock) {
-        _classCallCheck(this, Thread);
-
-        /**
-         * ID of top block of the thread
-         * @type {!string}
-         */
-        this.topBlock = firstBlock;
-
-        /**
-         * Stack for the thread. When the sequencer enters a control structure,
-         * the block is pushed onto the stack so we know where to exit.
-         * @type {Array.<string>}
-         */
-        this.stack = [];
-
-        /**
-         * Stack frames for the thread. Store metadata for the executing blocks.
-         * @type {Array.<Object>}
-         */
-        this.stackFrames = [];
-
-        /**
-         * Status of the thread, one of three states (below)
-         * @type {number}
-         */
-        this.status = 0; /* Thread.STATUS_RUNNING */
-
-        /**
-         * Target of this thread.
-         * @type {?Target}
-         */
-        this.target = null;
-
-        /**
-         * Whether the thread requests its script to glow during this frame.
-         * @type {boolean}
-         */
-        this.requestScriptGlowInFrame = false;
-
-        /**
-         * Which block ID should glow during this frame, if any.
-         * @type {?string}
-         */
-        this.blockGlowInFrame = null;
-
-        /**
-         * A timer for when the thread enters warp mode.
-         * Substitutes the sequencer's count toward WORK_TIME on a per-thread basis.
-         * @type {?Timer}
-         */
-        this.warpTimer = null;
-    }
-
-    /**
-     * Thread status for initialized or running thread.
-     * This is the default state for a thread - execution should run normally,
-     * stepping from block to block.
-     * @const
-     */
-
-
-    _createClass(Thread, [{
-        key: 'pushStack',
-
-
-        /**
-         * Push stack and update stack frames appropriately.
-         * @param {string} blockId Block ID to push to stack.
-         */
-        value: function pushStack(blockId) {
-            this.stack.push(blockId);
-            // Push an empty stack frame, if we need one.
-            // Might not, if we just popped the stack.
-            if (this.stack.length > this.stackFrames.length) {
-                // Copy warp mode from any higher level.
-                var warpMode = false;
-                if (this.stackFrames.length > 0 && this.stackFrames[this.stackFrames.length - 1]) {
-                    warpMode = this.stackFrames[this.stackFrames.length - 1].warpMode;
-                }
-                this.stackFrames.push({
-                    isLoop: false, // Whether this level of the stack is a loop.
-                    warpMode: warpMode, // Whether this level is in warp mode.
-                    reported: {}, // Collects reported input values.
-                    waitingReporter: null, // Name of waiting reporter.
-                    params: {}, // Procedure parameters.
-                    executionContext: {} // A context passed to block implementations.
-                });
-            }
-        }
-
-        /**
-         * Reset the stack frame for use by the next block.
-         * (avoids popping and re-pushing a new stack frame - keeps the warpmode the same
-         * @param {string} blockId Block ID to push to stack.
-         */
-
-    }, {
-        key: 'reuseStackForNextBlock',
-        value: function reuseStackForNextBlock(blockId) {
-            this.stack[this.stack.length - 1] = blockId;
-            var frame = this.stackFrames[this.stackFrames.length - 1];
-            frame.isLoop = false;
-            // frame.warpMode = warpMode;   // warp mode stays the same when reusing the stack frame.
-            frame.reported = {};
-            frame.waitingReporter = null;
-            frame.params = {};
-            frame.executionContext = {};
-        }
-
-        /**
-         * Pop last block on the stack and its stack frame.
-         * @return {string} Block ID popped from the stack.
-         */
-
-    }, {
-        key: 'popStack',
-        value: function popStack() {
-            this.stackFrames.pop();
-            return this.stack.pop();
-        }
-
-        /**
-         * Pop back down the stack frame until we hit a procedure call or the stack frame is emptied
-         */
-
-    }, {
-        key: 'stopThisScript',
-        value: function stopThisScript() {
-            var blockID = this.peekStack();
-            while (blockID !== null) {
-                var block = this.target.blocks.getBlock(blockID);
-                if (typeof block !== 'undefined' && block.opcode === 'procedures_callnoreturn') {
-                    break;
-                }
-                this.popStack();
-                blockID = this.peekStack();
-            }
-
-            if (this.stack.length === 0) {
-                // Clean up!
-                this.requestScriptGlowInFrame = false;
-                this.status = Thread.STATUS_DONE;
-            }
-        }
-
-        /**
-         * Get top stack item.
-         * @return {?string} Block ID on top of stack.
-         */
-
-    }, {
-        key: 'peekStack',
-        value: function peekStack() {
-            return this.stack.length > 0 ? this.stack[this.stack.length - 1] : null;
-        }
-
-        /**
-         * Get top stack frame.
-         * @return {?object} Last stack frame stored on this thread.
-         */
-
-    }, {
-        key: 'peekStackFrame',
-        value: function peekStackFrame() {
-            return this.stackFrames.length > 0 ? this.stackFrames[this.stackFrames.length - 1] : null;
-        }
-
-        /**
-         * Get stack frame above the current top.
-         * @return {?object} Second to last stack frame stored on this thread.
-         */
-
-    }, {
-        key: 'peekParentStackFrame',
-        value: function peekParentStackFrame() {
-            return this.stackFrames.length > 1 ? this.stackFrames[this.stackFrames.length - 2] : null;
-        }
-
-        /**
-         * Push a reported value to the parent of the current stack frame.
-         * @param {*} value Reported value to push.
-         */
-
-    }, {
-        key: 'pushReportedValue',
-        value: function pushReportedValue(value) {
-            var parentStackFrame = this.peekParentStackFrame();
-            if (parentStackFrame) {
-                var waitingReporter = parentStackFrame.waitingReporter;
-                parentStackFrame.reported[waitingReporter] = value;
-            }
-        }
-
-        /**
-         * Add a parameter to the stack frame.
-         * Use when calling a procedure with parameter values.
-         * @param {!string} paramName Name of parameter.
-         * @param {*} value Value to set for parameter.
-         */
-
-    }, {
-        key: 'pushParam',
-        value: function pushParam(paramName, value) {
-            var stackFrame = this.peekStackFrame();
-            stackFrame.params[paramName] = value;
-        }
-
-        /**
-         * Get a parameter at the lowest possible level of the stack.
-         * @param {!string} paramName Name of parameter.
-         * @return {*} value Value for parameter.
-         */
-
-    }, {
-        key: 'getParam',
-        value: function getParam(paramName) {
-            for (var i = this.stackFrames.length - 1; i >= 0; i--) {
-                var frame = this.stackFrames[i];
-                if (frame.params.hasOwnProperty(paramName)) {
-                    return frame.params[paramName];
-                }
-            }
-            return null;
-        }
-
-        /**
-         * Whether the current execution of a thread is at the top of the stack.
-         * @return {boolean} True if execution is at top of the stack.
-         */
-
-    }, {
-        key: 'atStackTop',
-        value: function atStackTop() {
-            return this.peekStack() === this.topBlock;
-        }
-
-        /**
-         * Switch the thread to the next block at the current level of the stack.
-         * For example, this is used in a standard sequence of blocks,
-         * where execution proceeds from one block to the next.
-         */
-
-    }, {
-        key: 'goToNextBlock',
-        value: function goToNextBlock() {
-            var nextBlockId = this.target.blocks.getNextBlock(this.peekStack());
-            this.reuseStackForNextBlock(nextBlockId);
-        }
-
-        /**
-         * Attempt to determine whether a procedure call is recursive,
-         * by examining the stack.
-         * @param {!string} procedureCode Procedure code of procedure being called.
-         * @return {boolean} True if the call appears recursive.
-         */
-
-    }, {
-        key: 'isRecursiveCall',
-        value: function isRecursiveCall(procedureCode) {
-            var callCount = 5; // Max number of enclosing procedure calls to examine.
-            var sp = this.stack.length - 1;
-            for (var i = sp - 1; i >= 0; i--) {
-                var block = this.target.blocks.getBlock(this.stack[i]);
-                if (block.opcode === 'procedures_callnoreturn' && block.mutation.proccode === procedureCode) {
-                    return true;
-                }
-                if (--callCount < 0) return false;
-            }
-            return false;
-        }
-    }], [{
-        key: 'STATUS_RUNNING',
-        get: function get() {
-            return 0;
-        }
-
-        /**
-         * Threads are in this state when a primitive is waiting on a promise;
-         * execution is paused until the promise changes thread status.
-         * @const
-         */
-
-    }, {
-        key: 'STATUS_PROMISE_WAIT',
-        get: function get() {
-            return 1;
-        }
-
-        /**
-         * Thread status for yield.
-         * @const
-         */
-
-    }, {
-        key: 'STATUS_YIELD',
-        get: function get() {
-            return 2;
-        }
-
-        /**
-         * Thread status for a single-tick yield. This will be cleared when the
-         * thread is resumed.
-         * @const
-         */
-
-    }, {
-        key: 'STATUS_YIELD_TICK',
-        get: function get() {
-            return 3;
-        }
-
-        /**
-         * Thread status for a finished/done thread.
-         * Thread is in this state when there are no more blocks to execute.
-         * @const
-         */
-
-    }, {
-        key: 'STATUS_DONE',
-        get: function get() {
-            return 4;
-        }
-    }]);
-
-    return Thread;
-}();
-
-module.exports = Thread;
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * @fileoverview
- * Object representing a Scratch variable.
- */
-
-var Variable = function () {
-    /**
-     * @param {!string} name Name of the variable.
-     * @param {(string|number)} value Value of the variable.
-     * @param {boolean} isCloud Whether the variable is stored in the cloud.
-     * @constructor
-     */
-    function Variable(name, value, isCloud) {
-        _classCallCheck(this, Variable);
-
-        this.name = name;
-        this.value = value;
-        this.isCloud = isCloud;
-    }
-
-    _createClass(Variable, [{
-        key: "toXML",
-        value: function toXML() {
-            return "<variable type=\"\">" + this.name + "</variable>";
-        }
-    }]);
-
-    return Variable;
-}();
-
-module.exports = Variable;
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var StringUtil = __webpack_require__(25);
-var log = __webpack_require__(7);
-
-/**
- * Load a costume's asset into memory asynchronously.
- * Do not call this unless there is a renderer attached.
- * @param {string} md5ext - the MD5 and extension of the costume to be loaded.
- * @param {!object} costume - the Scratch costume object.
- * @property {int} skinId - the ID of the costume's render skin, once installed.
- * @property {number} rotationCenterX - the X component of the costume's origin.
- * @property {number} rotationCenterY - the Y component of the costume's origin.
- * @property {number} [bitmapResolution] - the resolution scale for a bitmap costume.
- * @param {!Runtime} runtime - Scratch runtime, used to access the storage module.
- * @returns {?Promise} - a promise which will resolve after skinId is set, or null on error.
- */
-var loadCostume = function loadCostume(md5ext, costume, runtime) {
-    if (!runtime.storage) {
-        log.error('No storage module present; cannot load costume asset: ', md5ext);
-        return Promise.resolve(costume);
-    }
-
-    var AssetType = runtime.storage.AssetType;
-    var idParts = StringUtil.splitFirst(md5ext, '.');
-    var md5 = idParts[0];
-    var ext = idParts[1].toLowerCase();
-    var assetType = ext === 'svg' ? AssetType.ImageVector : AssetType.ImageBitmap;
-
-    var rotationCenter = [costume.rotationCenterX / costume.bitmapResolution, costume.rotationCenterY / costume.bitmapResolution];
-
-    var promise = runtime.storage.load(assetType, md5, ext).then(function (costumeAsset) {
-        costume.assetId = costumeAsset.assetId;
-        costume.dataFormat = ext;
-        return costumeAsset;
-    });
-
-    if (!runtime.renderer) {
-        log.error('No rendering module present; cannot load costume asset: ', md5ext);
-        return promise.then(function () {
-            return costume;
-        });
-    }
-
-    if (assetType === AssetType.ImageVector) {
-        promise = promise.then(function (costumeAsset) {
-            costume.skinId = runtime.renderer.createSVGSkin(costumeAsset.decodeText(), rotationCenter);
-            return costume;
-        });
-    } else {
-        promise = promise.then(function (costumeAsset) {
-            return new Promise(function (resolve, reject) {
-                var imageElement = new Image();
-                var onError = function onError() {
-                    // eslint-disable-next-line no-use-before-define
-                    removeEventListeners();
-                    reject();
-                };
-                var onLoad = function onLoad() {
-                    // eslint-disable-next-line no-use-before-define
-                    removeEventListeners();
-                    resolve(imageElement);
-                };
-                var removeEventListeners = function removeEventListeners() {
-                    imageElement.removeEventListener('error', onError);
-                    imageElement.removeEventListener('load', onLoad);
-                };
-                imageElement.addEventListener('error', onError);
-                imageElement.addEventListener('load', onLoad);
-                imageElement.src = costumeAsset.encodeDataURI();
-            });
-        }).then(function (imageElement) {
-            costume.skinId = runtime.renderer.createBitmapSkin(imageElement, costume.bitmapResolution, rotationCenter);
-            return costume;
-        });
-    }
-    return promise;
-};
-
-module.exports = loadCostume;
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var StringUtil = __webpack_require__(25);
-var log = __webpack_require__(7);
-
-/**
- * Load a sound's asset into memory asynchronously.
- * @param {!object} sound - the Scratch sound object.
- * @property {string} md5 - the MD5 and extension of the sound to be loaded.
- * @property {Buffer} data - sound data will be written here once loaded.
- * @param {!Runtime} runtime - Scratch runtime, used to access the storage module.
- * @returns {!Promise} - a promise which will resolve to the sound when ready.
- */
-var loadSound = function loadSound(sound, runtime) {
-    if (!runtime.storage) {
-        log.error('No storage module present; cannot load sound asset: ', sound.md5);
-        return Promise.resolve(sound);
-    }
-    if (!runtime.audioEngine) {
-        log.error('No audio engine present; cannot load sound asset: ', sound.md5);
-        return Promise.resolve(sound);
-    }
-    var idParts = StringUtil.splitFirst(sound.md5, '.');
-    var md5 = idParts[0];
-    var ext = idParts[1].toLowerCase();
-
-    return runtime.storage.load(runtime.storage.AssetType.Sound, md5, ext).then(function (soundAsset) {
-
-        sound.assetId = soundAsset.assetId;
-        sound.dataFormat = ext;
-        return runtime.audioEngine.decodeSound(Object.assign({}, sound, { data: soundAsset.data }));
-    }).then(function (soundId) {
-        sound.soundId = soundId;
-        return sound;
-    });
-};
-
-module.exports = loadSound;
-
-/***/ }),
-/* 23 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4750,8 +3729,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var log = __webpack_require__(7);
-var MathUtil = __webpack_require__(10);
+var log = __webpack_require__(4);
+var MathUtil = __webpack_require__(8);
 var Target = __webpack_require__(72);
 
 /**
@@ -4817,6 +3796,8 @@ var RenderedTarget = function (_Target) {
          * @type {boolean}
          */
         _this.isOriginal = true;
+
+        _this.isplug = false;
 
         /**
          * Whether this rendered target represents the Scratch stage.
@@ -4937,7 +3918,19 @@ var RenderedTarget = function (_Target) {
             this.emit(RenderedTarget.EVENT_TARGET_MOVED, this, oldX, oldY);
             this.runtime.requestTargetsUpdate(this);
         }
+    }, {
+        key: 'setPosition',
+        value: function setPosition(x, y) {
+            if (this.isStage) return;
+            var oldX = this.x;
+            var oldY = this.y;
 
+            this.x = x;
+            this.y = y;
+
+            this.emit(RenderedTarget.EVENT_TARGET_MOVED, this, oldX, oldY);
+            this.runtime.requestTargetsUpdate(this);
+        }
         /**
          * Get the rendered direction and scale, after applying rotation style.
          * @return {object<string, number>} Direction and scale to render.
@@ -5075,6 +4068,46 @@ var RenderedTarget = function (_Target) {
             }
         }
 
+        /**
+         * Set size, as a percentage of the costume size.
+         * @param {!number} size Size of rendered target, as % of costume size.
+         */
+
+    }, {
+        key: 'setRotationCenter',
+        value: function setRotationCenter(x, y) {
+            if (this.isStage) {
+                return;
+            }
+            if (this.renderer) {
+                // // Clamp to scales relative to costume and stage size.
+                // // See original ScratchSprite.as:setSize.
+                // const costumeSize = this.renderer.getSkinSize(this.drawableID);
+                // const origW = costumeSize[0];
+                // const origH = costumeSize[1];
+                // const minScale = Math.min(1, Math.max(5 / origW, 5 / origH));
+                // const maxScale = Math.min(
+                //     (1.5 * this.runtime.constructor.STAGE_WIDTH) / origW,
+                //     (1.5 * this.runtime.constructor.STAGE_HEIGHT) / origH
+                // );
+                // this.size = MathUtil.clamp(size / 100, minScale, maxScale) * 100;
+                // const renderedDirectionScale = this._getRenderedDirectionAndScale();
+                console.log('getBounds:', this.renderer.getBounds(this.drawableID));
+                var rotationCenter = this.renderer.getSkinRotationCenter(this.drawableID);
+                var x0 = this.x;
+                var y0 = this.y;
+                this.renderer.updateDrawableProperties(this.drawableID, {
+                    // rotationCenter: [x-bounds.left,bounds.top-y],
+                    rotationCenter: [x - (x0 - rotationCenter[0]), y0 + rotationCenter[1] - y]
+                });
+                // this.setPosition()
+
+                if (this.visible) {
+                    this.runtime.requestRedraw();
+                }
+                this.runtime.requestTargetsUpdate(this);
+            }
+        }
         /**
          * Set a particular graphic effect value.
          * @param {!string} effectName Name of effect (see `RenderedTarget.prototype.effects`).
@@ -5708,6 +4741,1035 @@ var RenderedTarget = function (_Target) {
 }(Target);
 
 module.exports = RenderedTarget;
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(Buffer) {// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// NOTE: These type checking functions intentionally don't use `instanceof`
+// because it is fragile and can be easily faked with `Object.create()`.
+
+function isArray(arg) {
+  if (Array.isArray) {
+    return Array.isArray(arg);
+  }
+  return objectToString(arg) === '[object Array]';
+}
+exports.isArray = isArray;
+
+function isBoolean(arg) {
+  return typeof arg === 'boolean';
+}
+exports.isBoolean = isBoolean;
+
+function isNull(arg) {
+  return arg === null;
+}
+exports.isNull = isNull;
+
+function isNullOrUndefined(arg) {
+  return arg == null;
+}
+exports.isNullOrUndefined = isNullOrUndefined;
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+exports.isNumber = isNumber;
+
+function isString(arg) {
+  return typeof arg === 'string';
+}
+exports.isString = isString;
+
+function isSymbol(arg) {
+  return typeof arg === 'symbol';
+}
+exports.isSymbol = isSymbol;
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+exports.isUndefined = isUndefined;
+
+function isRegExp(re) {
+  return objectToString(re) === '[object RegExp]';
+}
+exports.isRegExp = isRegExp;
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+exports.isObject = isObject;
+
+function isDate(d) {
+  return objectToString(d) === '[object Date]';
+}
+exports.isDate = isDate;
+
+function isError(e) {
+  return (objectToString(e) === '[object Error]' || e instanceof Error);
+}
+exports.isError = isError;
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+exports.isFunction = isFunction;
+
+function isPrimitive(arg) {
+  return arg === null ||
+         typeof arg === 'boolean' ||
+         typeof arg === 'number' ||
+         typeof arg === 'string' ||
+         typeof arg === 'symbol' ||  // ES6 symbol
+         typeof arg === 'undefined';
+}
+exports.isPrimitive = isPrimitive;
+
+exports.isBuffer = Buffer.isBuffer;
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3).Buffer))
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+//Types of elements found in the DOM
+module.exports = {
+	Text: "text", //Text
+	Directive: "directive", //<? ... ?>
+	Comment: "comment", //<!-- ... -->
+	Script: "script", //<script> tags
+	Style: "style", //<style> tags
+	Tag: "tag", //Any tag
+	CDATA: "cdata", //<![CDATA[ ... ]]>
+	Doctype: "doctype",
+
+	isTag: function(elem){
+		return elem.type === "tag" || elem.type === "script" || elem.type === "style";
+	}
+};
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Color = function () {
+    function Color() {
+        _classCallCheck(this, Color);
+    }
+
+    _createClass(Color, null, [{
+        key: 'decimalToHex',
+
+
+        /**
+         * Convert a Scratch decimal color to a hex string, #RRGGBB.
+         * @param {number} decimal RGB color as a decimal.
+         * @return {string} RGB color as #RRGGBB hex string.
+         */
+        value: function decimalToHex(decimal) {
+            if (decimal < 0) {
+                decimal += 0xFFFFFF + 1;
+            }
+            var hex = Number(decimal).toString(16);
+            hex = '#' + '000000'.substr(0, 6 - hex.length) + hex;
+            return hex;
+        }
+
+        /**
+         * Convert a Scratch decimal color to an RGB color object.
+         * @param {number} decimal RGB color as decimal.
+         * @return {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
+         */
+
+    }, {
+        key: 'decimalToRgb',
+        value: function decimalToRgb(decimal) {
+            var a = decimal >> 24 & 0xFF;
+            var r = decimal >> 16 & 0xFF;
+            var g = decimal >> 8 & 0xFF;
+            var b = decimal & 0xFF;
+            return { r: r, g: g, b: b, a: a > 0 ? a : 255 };
+        }
+
+        /**
+         * Convert a hex color (e.g., F00, #03F, #0033FF) to an RGB color object.
+         * CC-BY-SA Tim Down:
+         * https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+         * @param {!string} hex Hex representation of the color.
+         * @return {RGBObject} null on failure, or rgb: {r: red [0,255], g: green [0,255], b: blue [0,255]}.
+         */
+
+    }, {
+        key: 'hexToRgb',
+        value: function hexToRgb(hex) {
+            var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+            hex = hex.replace(shorthandRegex, function (m, r, g, b) {
+                return r + r + g + g + b + b;
+            });
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        /**
+         * Convert an RGB color object to a hex color.
+         * @param {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
+         * @return {!string} Hex representation of the color.
+         */
+
+    }, {
+        key: 'rgbToHex',
+        value: function rgbToHex(rgb) {
+            return Color.decimalToHex(Color.rgbToDecimal(rgb));
+        }
+
+        /**
+         * Convert an RGB color object to a Scratch decimal color.
+         * @param {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
+         * @return {!number} Number representing the color.
+         */
+
+    }, {
+        key: 'rgbToDecimal',
+        value: function rgbToDecimal(rgb) {
+            return (rgb.r << 16) + (rgb.g << 8) + rgb.b;
+        }
+
+        /**
+        * Convert a hex color (e.g., F00, #03F, #0033FF) to a decimal color number.
+        * @param {!string} hex Hex representation of the color.
+        * @return {!number} Number representing the color.
+        */
+
+    }, {
+        key: 'hexToDecimal',
+        value: function hexToDecimal(hex) {
+            return Color.rgbToDecimal(Color.hexToRgb(hex));
+        }
+
+        /**
+         * Convert an HSV color to RGB format.
+         * @param {HSVObject} hsv - {h: hue [0,360), s: saturation [0,1], v: value [0,1]}
+         * @return {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
+         */
+
+    }, {
+        key: 'hsvToRgb',
+        value: function hsvToRgb(hsv) {
+            var h = hsv.h % 360;
+            if (h < 0) h += 360;
+            var s = Math.max(0, Math.min(hsv.s, 1));
+            var v = Math.max(0, Math.min(hsv.v, 1));
+
+            var i = Math.floor(h / 60);
+            var f = h / 60 - i;
+            var p = v * (1 - s);
+            var q = v * (1 - s * f);
+            var t = v * (1 - s * (1 - f));
+
+            var r = void 0;
+            var g = void 0;
+            var b = void 0;
+
+            switch (i) {
+                default:
+                case 0:
+                    r = v;
+                    g = t;
+                    b = p;
+                    break;
+                case 1:
+                    r = q;
+                    g = v;
+                    b = p;
+                    break;
+                case 2:
+                    r = p;
+                    g = v;
+                    b = t;
+                    break;
+                case 3:
+                    r = p;
+                    g = q;
+                    b = v;
+                    break;
+                case 4:
+                    r = t;
+                    g = p;
+                    b = v;
+                    break;
+                case 5:
+                    r = v;
+                    g = p;
+                    b = q;
+                    break;
+            }
+
+            return {
+                r: Math.floor(r * 255),
+                g: Math.floor(g * 255),
+                b: Math.floor(b * 255)
+            };
+        }
+
+        /**
+         * Convert an RGB color to HSV format.
+         * @param {RGBObject} rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
+         * @return {HSVObject} hsv - {h: hue [0,360), s: saturation [0,1], v: value [0,1]}
+         */
+
+    }, {
+        key: 'rgbToHsv',
+        value: function rgbToHsv(rgb) {
+            var r = rgb.r / 255;
+            var g = rgb.g / 255;
+            var b = rgb.b / 255;
+            var x = Math.min(Math.min(r, g), b);
+            var v = Math.max(Math.max(r, g), b);
+
+            // For grays, hue will be arbitrarily reported as zero. Otherwise, calculate
+            var h = 0;
+            var s = 0;
+            if (x !== v) {
+                var f = r === x ? g - b : g === x ? b - r : r - g;
+                var i = r === x ? 3 : g === x ? 5 : 1;
+                h = (i - f / (v - x)) * 60 % 360;
+                s = (v - x) / v;
+            }
+
+            return { h: h, s: s, v: v };
+        }
+
+        /**
+         * Linear interpolation between rgb0 and rgb1.
+         * @param {RGBObject} rgb0 - the color corresponding to fraction1 <= 0.
+         * @param {RGBObject} rgb1 - the color corresponding to fraction1 >= 1.
+         * @param {number} fraction1 - the interpolation parameter. If this is 0.5, for example, mix the two colors equally.
+         * @return {RGBObject} the interpolated color.
+         */
+
+    }, {
+        key: 'mixRgb',
+        value: function mixRgb(rgb0, rgb1, fraction1) {
+            if (fraction1 <= 0) return rgb0;
+            if (fraction1 >= 1) return rgb1;
+            var fraction0 = 1 - fraction1;
+            return {
+                r: fraction0 * rgb0.r + fraction1 * rgb1.r,
+                g: fraction0 * rgb0.g + fraction1 * rgb1.g,
+                b: fraction0 * rgb0.b + fraction1 * rgb1.b
+            };
+        }
+    }, {
+        key: 'RGB_BLACK',
+
+        /**
+         * @typedef {object} RGBObject - An object representing a color in RGB format.
+         * @property {number} r - the red component, in the range [0, 255].
+         * @property {number} g - the green component, in the range [0, 255].
+         * @property {number} b - the blue component, in the range [0, 255].
+         */
+
+        /**
+         * @typedef {object} HSVObject - An object representing a color in HSV format.
+         * @property {number} h - hue, in the range [0-359).
+         * @property {number} s - saturation, in the range [0,1].
+         * @property {number} v - value, in the range [0,1].
+         */
+
+        /** @type {RGBObject} */
+        get: function get() {
+            return { r: 0, g: 0, b: 0 };
+        }
+
+        /** @type {RGBObject} */
+
+    }, {
+        key: 'RGB_WHITE',
+        get: function get() {
+            return { r: 255, g: 255, b: 255 };
+        }
+    }]);
+
+    return Color;
+}();
+
+module.exports = Color;
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * @fileoverview UID generator, from Blockly.
+ */
+
+/**
+ * Legal characters for the unique ID.
+ * Should be all on a US keyboard.  No XML special characters or control codes.
+ * Removed $ due to issue 251.
+ * @private
+ */
+var soup_ = '!#%()*+,-./:;=?@[]^_`{|}~' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+/**
+ * Generate a unique ID, from Blockly.  This should be globally unique.
+ * 87 characters ^ 20 length > 128 bits (better than a UUID).
+ * @return {string} A globally unique ID string.
+ */
+var uid = function uid() {
+  var length = 20;
+  var soupLength = soup_.length;
+  var id = [];
+  for (var i = 0; i < length; i++) {
+    id[i] = soup_.charAt(Math.random() * soupLength);
+  }
+  return id.join('');
+};
+
+module.exports = uid;
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+if (!process.version ||
+    process.version.indexOf('v0.') === 0 ||
+    process.version.indexOf('v1.') === 0 && process.version.indexOf('v1.8.') !== 0) {
+  module.exports = nextTick;
+} else {
+  module.exports = process.nextTick;
+}
+
+function nextTick(fn, arg1, arg2, arg3) {
+  if (typeof fn !== 'function') {
+    throw new TypeError('"callback" argument must be a function');
+  }
+  var len = arguments.length;
+  var args, i;
+  switch (len) {
+  case 0:
+  case 1:
+    return process.nextTick(fn);
+  case 2:
+    return process.nextTick(function afterTickOne() {
+      fn.call(null, arg1);
+    });
+  case 3:
+    return process.nextTick(function afterTickTwo() {
+      fn.call(null, arg1, arg2);
+    });
+  case 4:
+    return process.nextTick(function afterTickThree() {
+      fn.call(null, arg1, arg2, arg3);
+    });
+  default:
+    args = new Array(len - 1);
+    i = 0;
+    while (i < args.length) {
+      args[i++] = arguments[i];
+    }
+    return process.nextTick(function afterTick() {
+      fn.apply(null, args);
+    });
+  }
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @fileoverview
+ * Object representing a Scratch list.
+ */
+
+/**
+ * @param {!string} name Name of the list.
+ * @param {Array} contents Contents of the list, as an array.
+ * @constructor
+ */
+var List = function List(name, contents) {
+    _classCallCheck(this, List);
+
+    this.name = name;
+    this.contents = contents;
+};
+
+module.exports = List;
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * A thread is a running stack context and all the metadata needed.
+ * @param {?string} firstBlock First block to execute in the thread.
+ * @constructor
+ */
+var Thread = function () {
+    function Thread(firstBlock) {
+        _classCallCheck(this, Thread);
+
+        /**
+         * ID of top block of the thread
+         * @type {!string}
+         */
+        this.topBlock = firstBlock;
+
+        /**
+         * Stack for the thread. When the sequencer enters a control structure,
+         * the block is pushed onto the stack so we know where to exit.
+         * @type {Array.<string>}
+         */
+        this.stack = [];
+
+        /**
+         * Stack frames for the thread. Store metadata for the executing blocks.
+         * @type {Array.<Object>}
+         */
+        this.stackFrames = [];
+
+        /**
+         * Status of the thread, one of three states (below)
+         * @type {number}
+         */
+        this.status = 0; /* Thread.STATUS_RUNNING */
+
+        /**
+         * Target of this thread.
+         * @type {?Target}
+         */
+        this.target = null;
+
+        /**
+         * Whether the thread requests its script to glow during this frame.
+         * @type {boolean}
+         */
+        this.requestScriptGlowInFrame = false;
+
+        /**
+         * Which block ID should glow during this frame, if any.
+         * @type {?string}
+         */
+        this.blockGlowInFrame = null;
+
+        /**
+         * A timer for when the thread enters warp mode.
+         * Substitutes the sequencer's count toward WORK_TIME on a per-thread basis.
+         * @type {?Timer}
+         */
+        this.warpTimer = null;
+    }
+
+    /**
+     * Thread status for initialized or running thread.
+     * This is the default state for a thread - execution should run normally,
+     * stepping from block to block.
+     * @const
+     */
+
+
+    _createClass(Thread, [{
+        key: 'pushStack',
+
+
+        /**
+         * Push stack and update stack frames appropriately.
+         * @param {string} blockId Block ID to push to stack.
+         */
+        value: function pushStack(blockId) {
+            this.stack.push(blockId);
+            // Push an empty stack frame, if we need one.
+            // Might not, if we just popped the stack.
+            if (this.stack.length > this.stackFrames.length) {
+                // Copy warp mode from any higher level.
+                var warpMode = false;
+                if (this.stackFrames.length > 0 && this.stackFrames[this.stackFrames.length - 1]) {
+                    warpMode = this.stackFrames[this.stackFrames.length - 1].warpMode;
+                }
+                this.stackFrames.push({
+                    isLoop: false, // Whether this level of the stack is a loop.
+                    warpMode: warpMode, // Whether this level is in warp mode.
+                    reported: {}, // Collects reported input values.
+                    waitingReporter: null, // Name of waiting reporter.
+                    params: {}, // Procedure parameters.
+                    executionContext: {} // A context passed to block implementations.
+                });
+            }
+        }
+
+        /**
+         * Reset the stack frame for use by the next block.
+         * (avoids popping and re-pushing a new stack frame - keeps the warpmode the same
+         * @param {string} blockId Block ID to push to stack.
+         */
+
+    }, {
+        key: 'reuseStackForNextBlock',
+        value: function reuseStackForNextBlock(blockId) {
+            this.stack[this.stack.length - 1] = blockId;
+            var frame = this.stackFrames[this.stackFrames.length - 1];
+            frame.isLoop = false;
+            // frame.warpMode = warpMode;   // warp mode stays the same when reusing the stack frame.
+            frame.reported = {};
+            frame.waitingReporter = null;
+            frame.params = {};
+            frame.executionContext = {};
+        }
+
+        /**
+         * Pop last block on the stack and its stack frame.
+         * @return {string} Block ID popped from the stack.
+         */
+
+    }, {
+        key: 'popStack',
+        value: function popStack() {
+            this.stackFrames.pop();
+            return this.stack.pop();
+        }
+
+        /**
+         * Pop back down the stack frame until we hit a procedure call or the stack frame is emptied
+         */
+
+    }, {
+        key: 'stopThisScript',
+        value: function stopThisScript() {
+            var blockID = this.peekStack();
+            while (blockID !== null) {
+                var block = this.target.blocks.getBlock(blockID);
+                if (typeof block !== 'undefined' && block.opcode === 'procedures_callnoreturn') {
+                    break;
+                }
+                this.popStack();
+                blockID = this.peekStack();
+            }
+
+            if (this.stack.length === 0) {
+                // Clean up!
+                this.requestScriptGlowInFrame = false;
+                this.status = Thread.STATUS_DONE;
+            }
+        }
+
+        /**
+         * Get top stack item.
+         * @return {?string} Block ID on top of stack.
+         */
+
+    }, {
+        key: 'peekStack',
+        value: function peekStack() {
+            return this.stack.length > 0 ? this.stack[this.stack.length - 1] : null;
+        }
+
+        /**
+         * Get top stack frame.
+         * @return {?object} Last stack frame stored on this thread.
+         */
+
+    }, {
+        key: 'peekStackFrame',
+        value: function peekStackFrame() {
+            return this.stackFrames.length > 0 ? this.stackFrames[this.stackFrames.length - 1] : null;
+        }
+
+        /**
+         * Get stack frame above the current top.
+         * @return {?object} Second to last stack frame stored on this thread.
+         */
+
+    }, {
+        key: 'peekParentStackFrame',
+        value: function peekParentStackFrame() {
+            return this.stackFrames.length > 1 ? this.stackFrames[this.stackFrames.length - 2] : null;
+        }
+
+        /**
+         * Push a reported value to the parent of the current stack frame.
+         * @param {*} value Reported value to push.
+         */
+
+    }, {
+        key: 'pushReportedValue',
+        value: function pushReportedValue(value) {
+            var parentStackFrame = this.peekParentStackFrame();
+            if (parentStackFrame) {
+                var waitingReporter = parentStackFrame.waitingReporter;
+                parentStackFrame.reported[waitingReporter] = value;
+            }
+        }
+
+        /**
+         * Add a parameter to the stack frame.
+         * Use when calling a procedure with parameter values.
+         * @param {!string} paramName Name of parameter.
+         * @param {*} value Value to set for parameter.
+         */
+
+    }, {
+        key: 'pushParam',
+        value: function pushParam(paramName, value) {
+            var stackFrame = this.peekStackFrame();
+            stackFrame.params[paramName] = value;
+        }
+
+        /**
+         * Get a parameter at the lowest possible level of the stack.
+         * @param {!string} paramName Name of parameter.
+         * @return {*} value Value for parameter.
+         */
+
+    }, {
+        key: 'getParam',
+        value: function getParam(paramName) {
+            for (var i = this.stackFrames.length - 1; i >= 0; i--) {
+                var frame = this.stackFrames[i];
+                if (frame.params.hasOwnProperty(paramName)) {
+                    return frame.params[paramName];
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Whether the current execution of a thread is at the top of the stack.
+         * @return {boolean} True if execution is at top of the stack.
+         */
+
+    }, {
+        key: 'atStackTop',
+        value: function atStackTop() {
+            return this.peekStack() === this.topBlock;
+        }
+
+        /**
+         * Switch the thread to the next block at the current level of the stack.
+         * For example, this is used in a standard sequence of blocks,
+         * where execution proceeds from one block to the next.
+         */
+
+    }, {
+        key: 'goToNextBlock',
+        value: function goToNextBlock() {
+            var nextBlockId = this.target.blocks.getNextBlock(this.peekStack());
+            this.reuseStackForNextBlock(nextBlockId);
+        }
+
+        /**
+         * Attempt to determine whether a procedure call is recursive,
+         * by examining the stack.
+         * @param {!string} procedureCode Procedure code of procedure being called.
+         * @return {boolean} True if the call appears recursive.
+         */
+
+    }, {
+        key: 'isRecursiveCall',
+        value: function isRecursiveCall(procedureCode) {
+            var callCount = 5; // Max number of enclosing procedure calls to examine.
+            var sp = this.stack.length - 1;
+            for (var i = sp - 1; i >= 0; i--) {
+                var block = this.target.blocks.getBlock(this.stack[i]);
+                if (block.opcode === 'procedures_callnoreturn' && block.mutation.proccode === procedureCode) {
+                    return true;
+                }
+                if (--callCount < 0) return false;
+            }
+            return false;
+        }
+    }], [{
+        key: 'STATUS_RUNNING',
+        get: function get() {
+            return 0;
+        }
+
+        /**
+         * Threads are in this state when a primitive is waiting on a promise;
+         * execution is paused until the promise changes thread status.
+         * @const
+         */
+
+    }, {
+        key: 'STATUS_PROMISE_WAIT',
+        get: function get() {
+            return 1;
+        }
+
+        /**
+         * Thread status for yield.
+         * @const
+         */
+
+    }, {
+        key: 'STATUS_YIELD',
+        get: function get() {
+            return 2;
+        }
+
+        /**
+         * Thread status for a single-tick yield. This will be cleared when the
+         * thread is resumed.
+         * @const
+         */
+
+    }, {
+        key: 'STATUS_YIELD_TICK',
+        get: function get() {
+            return 3;
+        }
+
+        /**
+         * Thread status for a finished/done thread.
+         * Thread is in this state when there are no more blocks to execute.
+         * @const
+         */
+
+    }, {
+        key: 'STATUS_DONE',
+        get: function get() {
+            return 4;
+        }
+    }]);
+
+    return Thread;
+}();
+
+module.exports = Thread;
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @fileoverview
+ * Object representing a Scratch variable.
+ */
+
+var Variable = function () {
+    /**
+     * @param {!string} name Name of the variable.
+     * @param {(string|number)} value Value of the variable.
+     * @param {boolean} isCloud Whether the variable is stored in the cloud.
+     * @constructor
+     */
+    function Variable(name, value, isCloud) {
+        _classCallCheck(this, Variable);
+
+        this.name = name;
+        // this.id = name;
+        this.value = value;
+        this.isCloud = isCloud;
+    }
+
+    _createClass(Variable, [{
+        key: "toXML",
+        value: function toXML() {
+            return "<variable type=\"\">" + this.name + "</variable>";
+        }
+    }]);
+
+    return Variable;
+}();
+
+module.exports = Variable;
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var StringUtil = __webpack_require__(25);
+var log = __webpack_require__(4);
+
+/**
+ * Load a costume's asset into memory asynchronously.
+ * Do not call this unless there is a renderer attached.
+ * @param {string} md5ext - the MD5 and extension of the costume to be loaded.
+ * @param {!object} costume - the Scratch costume object.
+ * @property {int} skinId - the ID of the costume's render skin, once installed.
+ * @property {number} rotationCenterX - the X component of the costume's origin.
+ * @property {number} rotationCenterY - the Y component of the costume's origin.
+ * @property {number} [bitmapResolution] - the resolution scale for a bitmap costume.
+ * @param {!Runtime} runtime - Scratch runtime, used to access the storage module.
+ * @returns {?Promise} - a promise which will resolve after skinId is set, or null on error.
+ */
+var loadCostume = function loadCostume(md5ext, costume, runtime) {
+    if (!runtime.storage) {
+        log.error('No storage module present; cannot load costume asset: ', md5ext);
+        return Promise.resolve(costume);
+    }
+
+    var AssetType = runtime.storage.AssetType;
+    var idParts = StringUtil.splitFirst(md5ext, '.');
+    var md5 = idParts[0];
+    var ext = idParts[1].toLowerCase();
+    var assetType = ext === 'svg' ? AssetType.ImageVector : AssetType.ImageBitmap;
+
+    var rotationCenter = [costume.rotationCenterX / costume.bitmapResolution, costume.rotationCenterY / costume.bitmapResolution];
+
+    var promise = runtime.storage.load(assetType, md5, ext).then(function (costumeAsset) {
+        costume.assetId = costumeAsset.assetId;
+        costume.dataFormat = ext;
+        return costumeAsset;
+    });
+
+    if (!runtime.renderer) {
+        log.error('No rendering module present; cannot load costume asset: ', md5ext);
+        return promise.then(function () {
+            return costume;
+        });
+    }
+
+    if (assetType === AssetType.ImageVector) {
+        promise = promise.then(function (costumeAsset) {
+            costume.skinId = runtime.renderer.createSVGSkin(costumeAsset.decodeText(), rotationCenter);
+            return costume;
+        });
+    } else {
+        promise = promise.then(function (costumeAsset) {
+            return new Promise(function (resolve, reject) {
+                var imageElement = new Image();
+                var onError = function onError() {
+                    // eslint-disable-next-line no-use-before-define
+                    removeEventListeners();
+                    reject();
+                };
+                var onLoad = function onLoad() {
+                    // eslint-disable-next-line no-use-before-define
+                    removeEventListeners();
+                    resolve(imageElement);
+                };
+                var removeEventListeners = function removeEventListeners() {
+                    imageElement.removeEventListener('error', onError);
+                    imageElement.removeEventListener('load', onLoad);
+                };
+                imageElement.addEventListener('error', onError);
+                imageElement.addEventListener('load', onLoad);
+                imageElement.src = costumeAsset.encodeDataURI();
+            });
+        }).then(function (imageElement) {
+            costume.skinId = runtime.renderer.createBitmapSkin(imageElement, costume.bitmapResolution, rotationCenter);
+            return costume;
+        });
+    }
+    return promise;
+};
+
+module.exports = loadCostume;
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var StringUtil = __webpack_require__(25);
+var log = __webpack_require__(4);
+
+/**
+ * Load a sound's asset into memory asynchronously.
+ * @param {!object} sound - the Scratch sound object.
+ * @property {string} md5 - the MD5 and extension of the sound to be loaded.
+ * @property {Buffer} data - sound data will be written here once loaded.
+ * @param {!Runtime} runtime - Scratch runtime, used to access the storage module.
+ * @returns {!Promise} - a promise which will resolve to the sound when ready.
+ */
+var loadSound = function loadSound(sound, runtime) {
+    if (!runtime.storage) {
+        log.error('No storage module present; cannot load sound asset: ', sound.md5);
+        return Promise.resolve(sound);
+    }
+    if (!runtime.audioEngine) {
+        log.error('No audio engine present; cannot load sound asset: ', sound.md5);
+        return Promise.resolve(sound);
+    }
+    var idParts = StringUtil.splitFirst(sound.md5, '.');
+    var md5 = idParts[0];
+    var ext = idParts[1].toLowerCase();
+
+    return runtime.storage.load(runtime.storage.AssetType.Sound, md5, ext).then(function (soundAsset) {
+
+        sound.assetId = soundAsset.assetId;
+        sound.dataFormat = ext;
+        return runtime.audioEngine.decodeSound(Object.assign({}, sound, { data: soundAsset.data }));
+    }).then(function (soundId) {
+        sound.soundId = soundId;
+        return sound;
+    });
+};
+
+module.exports = loadSound;
 
 /***/ }),
 /* 24 */
@@ -13304,8 +13366,8 @@ function base64DetectIncompleteChar(buffer) {
 "use strict";
 
 
-exports.decode = exports.parse = __webpack_require__(134);
-exports.encode = exports.stringify = __webpack_require__(135);
+exports.decode = exports.parse = __webpack_require__(136);
+exports.encode = exports.stringify = __webpack_require__(137);
 
 
 /***/ }),
@@ -13342,7 +13404,7 @@ exports.encode = exports.stringify = __webpack_require__(135);
 
 /*<replacement>*/
 
-var processNextTick = __webpack_require__(17);
+var processNextTick = __webpack_require__(18);
 /*</replacement>*/
 
 module.exports = Writable;
@@ -13379,13 +13441,13 @@ var Duplex;
 Writable.WritableState = WritableState;
 
 /*<replacement>*/
-var util = __webpack_require__(13);
+var util = __webpack_require__(14);
 util.inherits = __webpack_require__(1);
 /*</replacement>*/
 
 /*<replacement>*/
 var internalUtil = {
-  deprecate: __webpack_require__(152)
+  deprecate: __webpack_require__(154)
 };
 /*</replacement>*/
 
@@ -13411,7 +13473,7 @@ util.inherits(Writable, Stream);
 function nop() {}
 
 function WritableState(options, stream) {
-  Duplex = Duplex || __webpack_require__(9);
+  Duplex = Duplex || __webpack_require__(10);
 
   options = options || {};
 
@@ -13551,7 +13613,7 @@ if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.protot
 }
 
 function Writable(options) {
-  Duplex = Duplex || __webpack_require__(9);
+  Duplex = Duplex || __webpack_require__(10);
 
   // Writable ctor is applied to Duplexes, too.
   // `realHasInstance` is necessary because using plain `instanceof`
@@ -13977,7 +14039,7 @@ Writable.prototype._destroy = function (err, cb) {
   this.end();
   cb(err);
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8), __webpack_require__(34).setImmediate, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(34).setImmediate, __webpack_require__(0)))
 
 /***/ }),
 /* 33 */
@@ -14101,7 +14163,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(143);
+__webpack_require__(145);
 exports.setImmediate = setImmediate;
 exports.clearImmediate = clearImmediate;
 
@@ -14134,8 +14196,8 @@ exports.clearImmediate = clearImmediate;
 
 
 
-var punycode = __webpack_require__(133);
-var util = __webpack_require__(151);
+var punycode = __webpack_require__(135);
+var util = __webpack_require__(153);
 
 exports.parse = urlParse;
 exports.resolve = urlResolve;
@@ -14854,7 +14916,7 @@ Url.prototype.parseHost = function() {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var html = __webpack_require__(11);
+var html = __webpack_require__(12);
 
 /**
  * Convert a part of a mutation DOM to a mutation VM object, recursively.
@@ -14882,7 +14944,7 @@ var mutatorTagToObject = function mutatorTagToObject(dom) {
  * @return {object} Object representing the mutation.
  */
 var mutationAdpater = function mutationAdpater(mutation) {
-    console.log(mutation);
+    // console.log(mutation);
     var mutationParsed = void 0;
     // Check if the mutation is already parsed; if not, parse it.
     if ((typeof mutation === 'undefined' ? 'undefined' : _typeof(mutation)) === 'object') {
@@ -14906,8 +14968,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var RenderedTarget = __webpack_require__(23);
-var Blocks = __webpack_require__(12);
+var RenderedTarget = __webpack_require__(13);
+var Blocks = __webpack_require__(11);
 
 var Sprite = function () {
   /**
@@ -15048,7 +15110,7 @@ Object.keys(domLvl1).forEach(function(key) {
 /* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var decodeMap = __webpack_require__(101);
+var decodeMap = __webpack_require__(103);
 
 module.exports = decodeCodePoint;
 
@@ -15315,7 +15377,7 @@ function Parser(cbs, options){
 	if(this._cbs.onparserinit) this._cbs.onparserinit(this);
 }
 
-__webpack_require__(1)(Parser, __webpack_require__(4).EventEmitter);
+__webpack_require__(1)(Parser, __webpack_require__(5).EventEmitter);
 
 Parser.prototype._updatePosition = function(initialOffset){
 	if(this.endIndex === null){
@@ -16467,7 +16529,7 @@ Tokenizer.prototype._emitPartial = function(value){
 module.exports = Stream;
 
 var Parser = __webpack_require__(41),
-    WritableStream = __webpack_require__(145).Writable || __webpack_require__(159).Writable,
+    WritableStream = __webpack_require__(147).Writable || __webpack_require__(161).Writable,
     StringDecoder = __webpack_require__(30).StringDecoder,
     Buffer = __webpack_require__(3).Buffer;
 
@@ -16534,7 +16596,7 @@ module.exports = color;
 "use strict";
 
 
-module.exports = typeof Promise === 'function' ? Promise : __webpack_require__(131);
+module.exports = typeof Promise === 'function' ? Promise : __webpack_require__(133);
 
 
 /***/ }),
@@ -16567,7 +16629,7 @@ module.exports = typeof Promise === 'function' ? Promise : __webpack_require__(1
 
 /*<replacement>*/
 
-var processNextTick = __webpack_require__(17);
+var processNextTick = __webpack_require__(18);
 /*</replacement>*/
 
 module.exports = Readable;
@@ -16583,7 +16645,7 @@ var Duplex;
 Readable.ReadableState = ReadableState;
 
 /*<replacement>*/
-var EE = __webpack_require__(4).EventEmitter;
+var EE = __webpack_require__(5).EventEmitter;
 
 var EElistenerCount = function (emitter, type) {
   return emitter.listeners(type).length;
@@ -16608,12 +16670,12 @@ function _isUint8Array(obj) {
 /*</replacement>*/
 
 /*<replacement>*/
-var util = __webpack_require__(13);
+var util = __webpack_require__(14);
 util.inherits = __webpack_require__(1);
 /*</replacement>*/
 
 /*<replacement>*/
-var debugUtil = __webpack_require__(160);
+var debugUtil = __webpack_require__(162);
 var debug = void 0;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
@@ -16622,7 +16684,7 @@ if (debugUtil && debugUtil.debuglog) {
 }
 /*</replacement>*/
 
-var BufferList = __webpack_require__(139);
+var BufferList = __webpack_require__(141);
 var destroyImpl = __webpack_require__(49);
 var StringDecoder;
 
@@ -16645,7 +16707,7 @@ function prependListener(emitter, event, fn) {
 }
 
 function ReadableState(options, stream) {
-  Duplex = Duplex || __webpack_require__(9);
+  Duplex = Duplex || __webpack_require__(10);
 
   options = options || {};
 
@@ -16713,7 +16775,7 @@ function ReadableState(options, stream) {
 }
 
 function Readable(options) {
-  Duplex = Duplex || __webpack_require__(9);
+  Duplex = Duplex || __webpack_require__(10);
 
   if (!(this instanceof Readable)) return new Readable(options);
 
@@ -17549,7 +17611,7 @@ function indexOf(xs, x) {
   }
   return -1;
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(9)))
 
 /***/ }),
 /* 48 */
@@ -17623,10 +17685,10 @@ function indexOf(xs, x) {
 
 module.exports = Transform;
 
-var Duplex = __webpack_require__(9);
+var Duplex = __webpack_require__(10);
 
 /*<replacement>*/
-var util = __webpack_require__(13);
+var util = __webpack_require__(14);
 util.inherits = __webpack_require__(1);
 /*</replacement>*/
 
@@ -17780,7 +17842,7 @@ function done(stream, er, data) {
 
 /*<replacement>*/
 
-var processNextTick = __webpack_require__(17);
+var processNextTick = __webpack_require__(18);
 /*</replacement>*/
 
 // undocumented cb() API, needed for core, not for public API
@@ -17853,16 +17915,16 @@ module.exports = {
 /* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(4).EventEmitter;
+module.exports = __webpack_require__(5).EventEmitter;
 
 
 /***/ }),
 /* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {var ClientRequest = __webpack_require__(146)
-var extend = __webpack_require__(156)
-var statusCodes = __webpack_require__(83)
+/* WEBPACK VAR INJECTION */(function(global) {var ClientRequest = __webpack_require__(148)
+var extend = __webpack_require__(158)
+var statusCodes = __webpack_require__(85)
 var url = __webpack_require__(35)
 
 var http = exports
@@ -18546,7 +18608,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(154);
+exports.isBuffer = __webpack_require__(156);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -18590,7 +18652,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(153);
+exports.inherits = __webpack_require__(155);
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -18608,13 +18670,13 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(9)))
 
 /***/ }),
 /* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const VirtualMachine = __webpack_require__(81);
+const VirtualMachine = __webpack_require__(83);
 
 module.exports = VirtualMachine;
 
@@ -19035,6 +19097,8 @@ var Scratch3EventBlocks = function () {
             // @todo: Other cases :)
             if (option === 'timer') {
                 return util.ioQuery('clock', 'projectTimer') > value;
+            } else if (option === 'loudness') {
+                return this.runtime.audioEngine.getLoudness() > value;
             }
             return false;
         }
@@ -19345,7 +19409,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Cast = __webpack_require__(2);
-var MathUtil = __webpack_require__(10);
+var MathUtil = __webpack_require__(8);
 var Timer = __webpack_require__(26);
 
 var Scratch3MotionBlocks = function () {
@@ -19633,7 +19697,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Cast = __webpack_require__(2);
-var MathUtil = __webpack_require__(10);
+var MathUtil = __webpack_require__(8);
 
 var Scratch3OperatorsBlocks = function () {
     function Scratch3OperatorsBlocks(runtime) {
@@ -19832,9 +19896,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Cast = __webpack_require__(2);
 var Clone = __webpack_require__(24);
-var Color = __webpack_require__(15);
-var MathUtil = __webpack_require__(10);
-var RenderedTarget = __webpack_require__(23);
+var Color = __webpack_require__(16);
+var MathUtil = __webpack_require__(8);
+var RenderedTarget = __webpack_require__(13);
 
 /**
  * @typedef {object} PenState - the pen state associated with a particular target.
@@ -19908,17 +19972,17 @@ var Scratch3PenBlocks = function () {
     }, {
         key: '_getPenLayerID',
         value: function _getPenLayerID() {
-            if (this._penSkinId < 0 && this.runtime.renderer) {
-                this._penSkinId = this.runtime.renderer.createPenSkin();
-                this._penDrawableId = this.runtime.renderer.createDrawable();
-                this.runtime.renderer.setDrawableOrder(this._penDrawableId, Scratch3PenBlocks.PEN_ORDER);
-                this.runtime.renderer.updateDrawableProperties(this._penDrawableId, { skinId: this._penSkinId });
+            // if (this._penSkinId < 0 && this.runtime.renderer) {
+            //     this._penSkinId = this.runtime.renderer.createPenSkin();
+            //     this._penDrawableId = this.runtime.renderer.createDrawable();
+            //     this.runtime.renderer.setDrawableOrder(this._penDrawableId, Scratch3PenBlocks.PEN_ORDER);
+            //     this.runtime.renderer.updateDrawableProperties(this._penDrawableId, {skinId: this._penSkinId});
+            // }
+            // return this._penSkinId;
+            if (this.runtime.renderer) {
+                this._penSkinId = this.runtime.renderer.getPenSkinId();
             }
-            // console.log('_penSkinId--->',this._penSkinId);
             return this._penSkinId;
-            // var penSkinId = this.runtime.renderer.getPenSkinId();
-            // this.runtime.renderer.setDrawableOrder(penSkinId, Scratch3PenBlocks.PEN_ORDER);
-            // return penSkinId;
         }
 
         /**
@@ -20566,7 +20630,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var MathUtil = __webpack_require__(10);
+var MathUtil = __webpack_require__(8);
 var Cast = __webpack_require__(2);
 var Clone = __webpack_require__(24);
 
@@ -20946,8 +21010,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var color = __webpack_require__(15);
-var log = __webpack_require__(7);
+var color = __webpack_require__(16);
+var log = __webpack_require__(4);
 
 /**
  * Manage power, direction, and timers for one WeDo 2.0 motor.
@@ -21854,7 +21918,7 @@ module.exports = Scratch3WeDo2Blocks;
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var mutationAdapter = __webpack_require__(36);
-var html = __webpack_require__(11);
+var html = __webpack_require__(12);
 
 /**
  * Convert and an individual block DOM to the representation tree.
@@ -22020,8 +22084,8 @@ module.exports = adapter;
 "use strict";
 
 
-var log = __webpack_require__(7);
-var Thread = __webpack_require__(19);
+var log = __webpack_require__(4);
+var Thread = __webpack_require__(20);
 
 var _require = __webpack_require__(29),
     Map = _require.Map;
@@ -22336,22 +22400,22 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var EventEmitter = __webpack_require__(4);
+var EventEmitter = __webpack_require__(5);
 var Sequencer = __webpack_require__(71);
-var Blocks = __webpack_require__(12);
-var Thread = __webpack_require__(19);
+var Blocks = __webpack_require__(11);
+var Thread = __webpack_require__(20);
 
 var _require = __webpack_require__(29),
     OrderedMap = _require.OrderedMap;
 
+var SpritePlug = __webpack_require__(81);
+
 // Virtual I/O devices.
-
-
 var Clock = __webpack_require__(73);
 var DeviceManager = __webpack_require__(74);
 var Keyboard = __webpack_require__(75);
 var Mouse = __webpack_require__(76);
-var uid = __webpack_require__(16);
+var uid = __webpack_require__(17);
 var defaultBlockPackages = {
     scratch3_control: __webpack_require__(56),
     scratch3_event: __webpack_require__(58),
@@ -22394,6 +22458,10 @@ var Runtime = function (_EventEmitter) {
 
         /** @type {!Sequencer} */
         _this.sequencer = new Sequencer(_this);
+
+        // this.centerPointRenderedTarget = new RenderedTarget(this, this.runtime);
+
+        // this.sequencer = new Sequencer(this);
 
         /**
          * Storage container for flyout blocks.
@@ -22764,7 +22832,7 @@ var Runtime = function (_EventEmitter) {
             // Remove any existing thread.
 
             var topBlock = this._editingTarget.blocks.getBlock(topBlockId);
-            if (topBlock.opcode === "sound_play") {
+            if (topBlock && topBlock.opcode && topBlock.opcode === "sound_play") {
 
                 var topInputs = this._editingTarget.blocks.getInputs(topBlock);
                 var fileBlock = this._editingTarget.blocks.getBlock(topInputs.SOUND_MENU.block);
@@ -22930,6 +22998,8 @@ var Runtime = function (_EventEmitter) {
     }, {
         key: 'disposeTarget',
         value: function disposeTarget(disposingTarget) {
+            // console.log('disposingTarget',disposingTarget);
+
             this.targets = this.targets.filter(function (target) {
                 if (disposingTarget !== target) return true;
 
@@ -22994,6 +23064,8 @@ var Runtime = function (_EventEmitter) {
                     newTargets.push(this.targets[i]);
                 }
             }
+            console.log('this.target', this.target);
+            console.log('newTargets', newTargets);
             this.targets = newTargets;
             // Dispose all threads.
             var threadsCopy = this.threads.slice();
@@ -23093,12 +23165,12 @@ var Runtime = function (_EventEmitter) {
     }, {
         key: 'setEditingTarget',
         value: function setEditingTarget(editingTarget) {
-            console.log('******************editingTarget***************:', editingTarget);
+            // getTargetById();
             this._editingTarget = editingTarget;
             // Script glows must be cleared.
             this._scriptGlowsPreviousFrame = [];
             this._updateGlows();
-            this.updateEditTargetBoxSkin(editingTarget);
+            this.updateEditTargetPlug(editingTarget);
             this.requestTargetsUpdate(editingTarget);
         }
 
@@ -23304,17 +23376,14 @@ var Runtime = function (_EventEmitter) {
          * @param {string} targetId Id of target to find.
          * @return {?Target} The target, if found.
          */
-
-    }, {
-        key: 'copyTargetById',
-        value: function copyTargetById(targetId) {
-            var target = this.getTargetById(targetId);
-            new RenderedTarget(target.sprite, this);
-
-            obj.id = uid();
-            obj.drawableID = this.renderer.createDrawable();
-            return target;
-        }
+        // copyTargetById (targetId) {
+        //     var target = this.getTargetById(targetId);
+        //     new RenderedTarget(target.sprite, this);
+        //
+        //     obj.id = uid();
+        //     obj.drawableID = this.renderer.createDrawable();
+        //     return target;
+        // }
         /**
          * Get a target by its id.
          * @param {string} targetId Id of target to find.
@@ -23410,6 +23479,7 @@ var Runtime = function (_EventEmitter) {
     }, {
         key: 'getTargetForStage',
         value: function getTargetForStage() {
+            // console.log(this.targets);
             for (var i = 0; i < this.targets.length; i++) {
                 var target = this.targets[i];
                 if (target.isStage) {
@@ -23447,10 +23517,15 @@ var Runtime = function (_EventEmitter) {
          */
 
     }, {
-        key: 'updateEditTargetBoxSkin',
-        value: function updateEditTargetBoxSkin(editingTarget) {}
-        //this.renderer.updateEditTargetBoxSkin(editingTarget);
-
+        key: 'updateEditTargetPlug',
+        value: function updateEditTargetPlug(editingTarget) {
+            if (!this.spritePlug) {
+                this.spritePlug = new SpritePlug(this);
+            } else if (!this.spritePlug.clones.length) {
+                this.centerPointPlug = this.spritePlug.createClone();
+                this.targets.push(this.centerPointPlug);
+            }
+        }
         /**
          * Set up timers to repeatedly step in a browser.
          */
@@ -23472,7 +23547,7 @@ var Runtime = function (_EventEmitter) {
     }, {
         key: 'createMsgPrompt',
         value: function createMsgPrompt() {
-            console.log('createMsgPrompt');
+            // console.log('createMsgPrompt');
             return;
         }
     }], [{
@@ -23640,7 +23715,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Timer = __webpack_require__(26);
-var Thread = __webpack_require__(19);
+var Thread = __webpack_require__(20);
 var execute = __webpack_require__(68);
 
 var Sequencer = function () {
@@ -23915,12 +23990,12 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var EventEmitter = __webpack_require__(4);
+var EventEmitter = __webpack_require__(5);
 
-var Blocks = __webpack_require__(12);
-var Variable = __webpack_require__(20);
-var List = __webpack_require__(18);
-var uid = __webpack_require__(16);
+var Blocks = __webpack_require__(11);
+var Variable = __webpack_require__(21);
+var List = __webpack_require__(19);
+var uid = __webpack_require__(17);
 
 /**
  * @fileoverview
@@ -23934,175 +24009,216 @@ var uid = __webpack_require__(16);
  */
 
 var Target = function (_EventEmitter) {
-  _inherits(Target, _EventEmitter);
+    _inherits(Target, _EventEmitter);
 
-  function Target(blocks) {
-    _classCallCheck(this, Target);
+    function Target(blocks) {
+        _classCallCheck(this, Target);
 
-    var _this = _possibleConstructorReturn(this, (Target.__proto__ || Object.getPrototypeOf(Target)).call(this));
+        var _this = _possibleConstructorReturn(this, (Target.__proto__ || Object.getPrototypeOf(Target)).call(this));
 
-    if (!blocks) {
-      blocks = new Blocks();
-    }
-    /**
-     * A unique ID for this target.
-     * @type {string}
-     */
-    _this.id = uid();
-    /**
-     * Blocks run as code for this target.
-     * @type {!Blocks}
-     */
-    _this.blocks = blocks;
-    /**
-     * Dictionary of variables and their values for this target.
-     * Key is the variable name.
-     * @type {Object.<string,*>}
-     */
-    _this.variables = {};
-    /**
-     * Dictionary of lists and their contents for this target.
-     * Key is the list name.
-     * @type {Object.<string,*>}
-     */
-    _this.lists = {};
-    _this.messages = {};
-    /**
-     * Dictionary of custom state for this target.
-     * This can be used to store target-specific custom state for blocks which need it.
-     * TODO: do we want to persist this in SB3 files?
-     * @type {Object.<string,*>}
-     */
-    _this._customState = {};
-    return _this;
-  }
-
-  /**
-   * Called when the project receives a "green flag."
-   * @abstract
-   */
-
-
-  _createClass(Target, [{
-    key: 'onGreenFlag',
-    value: function onGreenFlag() {}
-
-    /**
-     * Return a human-readable name for this target.
-     * Target implementations should override this.
-     * @abstract
-     * @returns {string} Human-readable name for the target.
-     */
-
-  }, {
-    key: 'getName',
-    value: function getName() {
-      return this.id;
-    }
-
-    /**
-     * Look up a variable object, and create it if one doesn't exist.
-     * Search begins for local variables; then look for globals.
-     * @param {!string} name Name of the variable.
-     * @return {!Variable} Variable object.
-     */
-
-  }, {
-    key: 'lookupOrCreateVariable',
-    value: function lookupOrCreateVariable(name) {
-      // If we have a local copy, return it.
-      if (this.variables.hasOwnProperty(name)) {
-        return this.variables[name];
-      }
-      // If the stage has a global copy, return it.
-
-      //现在的变量全部定义在 stage 上，为全局变量
-      var stage = this.runtime.getTargetForStage();
-      if (this.runtime && !this.isStage) {
-        if (stage.variables.hasOwnProperty(name)) {
-          return stage.variables[name];
+        if (!blocks) {
+            blocks = new Blocks();
         }
-      }
-      // No variable with this name exists - create it locally.
-      var newVariable = new Variable(name, 0, false);
-      stage.variables[name] = newVariable;
-      return newVariable;
+        /**
+         * A unique ID for this target.
+         * @type {string}
+         */
+        _this.id = uid();
+        /**
+         * Blocks run as code for this target.
+         * @type {!Blocks}
+         */
+        _this.blocks = blocks;
+        /**
+         * Dictionary of variables and their values for this target.
+         * Key is the variable name.
+         * @type {Object.<string,*>}
+         */
+        _this.variables = {};
+        /**
+         * Dictionary of lists and their contents for this target.
+         * Key is the list name.
+         * @type {Object.<string,*>}
+         */
+        _this.lists = {};
+        _this.messages = {};
+        /**
+         * Dictionary of custom state for this target.
+         * This can be used to store target-specific custom state for blocks which need it.
+         * TODO: do we want to persist this in SB3 files?
+         * @type {Object.<string,*>}
+         */
+        _this._customState = {};
+        return _this;
     }
 
     /**
-    * Look up a list object for this target, and create it if one doesn't exist.
-    * Search begins for local lists; then look for globals.
-    * @param {!string} name Name of the list.
-    * @return {!List} List object.
+     * Called when the project receives a "green flag."
+     * @abstract
      */
 
-  }, {
-    key: 'lookupOrCreateList',
-    value: function lookupOrCreateList(name) {
-      // If we have a local copy, return it.
-      if (this.lists.hasOwnProperty(name)) {
-        return this.lists[name];
-      }
-      // If the stage has a global copy, return it.
-      if (this.runtime && !this.isStage) {
-        var stage = this.runtime.getTargetForStage();
-        if (stage.lists.hasOwnProperty(name)) {
-          return stage.lists[name];
+
+    _createClass(Target, [{
+        key: 'onGreenFlag',
+        value: function onGreenFlag() {}
+
+        /**
+         * Return a human-readable name for this target.
+         * Target implementations should override this.
+         * @abstract
+         * @returns {string} Human-readable name for the target.
+         */
+
+    }, {
+        key: 'getName',
+        value: function getName() {
+            return this.id;
         }
-      }
-      // No list with this name exists - create it locally.
-      var newList = new List(name, []);
-      this.lists[name] = newList;
-      return newList;
-    }
 
-    /**
-     * Post/edit sprite info.
-     * @param {object} data An object with sprite info data to set.
-     * @abstract
-     */
+        /**
+         * Look up a variable object, and create it if one doesn't exist.
+         * Search begins for local variables; then look for globals.
+         * @param {!string} name Name of the variable.
+         * @return {!Variable} Variable object.
+         */
 
-  }, {
-    key: 'postSpriteInfo',
-    value: function postSpriteInfo() {}
+    }, {
+        key: 'lookupOrCreateVariable',
+        value: function lookupOrCreateVariable(name) {
+            // If we have a local copy, return it.
+            if (this.variables.hasOwnProperty(name)) {
+                return this.variables[name];
+            }
+            // If the stage has a global copy, return it.
 
-    /**
-     * Retrieve custom state associated with this target and the provided state ID.
-     * @param {string} stateId - specify which piece of state to retrieve.
-     * @returns {*} the associated state, if any was found.
-     */
+            //现在的变量全部定义在 stage 上，为全局变量
+            var stage = this.runtime.getTargetForStage();
+            if (this.runtime && !this.isStage) {
+                if (stage.variables.hasOwnProperty(name)) {
+                    return stage.variables[name];
+                }
+            }
+            // No variable with this name exists - create it locally.
+            var newVariable = new Variable(name, 0, false);
+            stage.variables[name] = newVariable;
+            return newVariable;
+        }
 
-  }, {
-    key: 'getCustomState',
-    value: function getCustomState(stateId) {
-      return this._customState[stateId];
-    }
+        /**
+        * Look up a list object for this target, and create it if one doesn't exist.
+        * Search begins for local lists; then look for globals.
+        * @param {!string} name Name of the list.
+        * @return {!List} List object.
+         */
 
-    /**
-     * Store custom state associated with this target and the provided state ID.
-     * @param {string} stateId - specify which piece of state to store on this target.
-     * @param {*} newValue - the state value to store.
-     */
+    }, {
+        key: 'lookupOrCreateList',
+        value: function lookupOrCreateList(name) {
+            // If we have a local copy, return it.
+            if (this.lists.hasOwnProperty(name)) {
+                return this.lists[name];
+            }
+            // If the stage has a global copy, return it.
+            if (this.runtime && !this.isStage) {
+                var stage = this.runtime.getTargetForStage();
+                if (stage.lists.hasOwnProperty(name)) {
+                    return stage.lists[name];
+                }
+            }
+            // No list with this name exists - create it locally.
+            var newList = new List(name, []);
+            this.lists[name] = newList;
+            return newList;
+        }
+    }, {
+        key: 'renameVariable',
+        value: function renameVariable(id, newName) {
+            if (this.variables.hasOwnProperty(id)) {
+                var variable = this.variables[id];
+                if (variable.id === id) {
+                    variable.name = newName;
 
-  }, {
-    key: 'setCustomState',
-    value: function setCustomState(stateId, newValue) {
-      this._customState[stateId] = newValue;
-    }
+                    if (this.runtime) {
+                        var blocks = this.runtime.monitorBlocks;
+                        blocks.changeBlock({
+                            id: id,
+                            element: 'field',
+                            name: 'VARIABLE',
+                            value: id
+                        }, this.runtime);
+                        this.runtime.requestUpdateMonitor(Map({
+                            id: id,
+                            params: blocks._getBlockParams(blocks.getBlock(variable.id))
+                        }));
+                    }
+                    variable.id = newName;
+                }
+            }
+        }
 
-    /**
-     * Call to destroy a target.
-     * @abstract
-     */
+        /**
+         * Removes the variable with the given id from the dictionary of variables.
+         * @param {string} id Id of renamed variable.
+         */
 
-  }, {
-    key: 'dispose',
-    value: function dispose() {
-      this._customState = {};
-    }
-  }]);
+    }, {
+        key: 'deleteVariable',
+        value: function deleteVariable(id) {
+            if (this.variables.hasOwnProperty(id)) {
+                delete this.variables[id];
+                if (this.runtime) {
+                    this.runtime.monitorBlocks.deleteBlock(id);
+                    this.runtime.requestRemoveMonitor(id);
+                }
+            }
+        }
+        /**
+         * Post/edit sprite info.
+         * @param {object} data An object with sprite info data to set.
+         * @abstract
+         */
 
-  return Target;
+    }, {
+        key: 'postSpriteInfo',
+        value: function postSpriteInfo() {}
+
+        /**
+         * Retrieve custom state associated with this target and the provided state ID.
+         * @param {string} stateId - specify which piece of state to retrieve.
+         * @returns {*} the associated state, if any was found.
+         */
+
+    }, {
+        key: 'getCustomState',
+        value: function getCustomState(stateId) {
+            return this._customState[stateId];
+        }
+
+        /**
+         * Store custom state associated with this target and the provided state ID.
+         * @param {string} stateId - specify which piece of state to store on this target.
+         * @param {*} newValue - the state value to store.
+         */
+
+    }, {
+        key: 'setCustomState',
+        value: function setCustomState(stateId, newValue) {
+            this._customState[stateId] = newValue;
+        }
+
+        /**
+         * Call to destroy a target.
+         * @abstract
+         */
+
+    }, {
+        key: 'dispose',
+        value: function dispose() {
+            this._customState = {};
+        }
+    }]);
+
+    return Target;
 }(EventEmitter);
 
 module.exports = Target;
@@ -24179,8 +24295,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var got = __webpack_require__(103);
-var io = __webpack_require__(144);
+var got = __webpack_require__(105);
+var io = __webpack_require__(146);
 var querystring = __webpack_require__(31);
 
 /**
@@ -24788,7 +24904,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var MathUtil = __webpack_require__(10);
+var MathUtil = __webpack_require__(8);
 
 var Mouse = function () {
     function Mouse(runtime) {
@@ -24931,18 +25047,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  * scratch-vm runtime structures.
  */
 
-var Blocks = __webpack_require__(12);
-var RenderedTarget = __webpack_require__(23);
+var Blocks = __webpack_require__(11);
+var RenderedTarget = __webpack_require__(13);
 var Sprite = __webpack_require__(37);
-var Color = __webpack_require__(15);
-var log = __webpack_require__(7);
-var uid = __webpack_require__(16);
+var Color = __webpack_require__(16);
+var log = __webpack_require__(4);
+var uid = __webpack_require__(17);
 var specMap = __webpack_require__(78);
-var Variable = __webpack_require__(20);
-var List = __webpack_require__(18);
+var Variable = __webpack_require__(21);
+var List = __webpack_require__(19);
 
-var loadCostume = __webpack_require__(21);
-var loadSound = __webpack_require__(22);
+var loadCostume = __webpack_require__(22);
+var loadSound = __webpack_require__(23);
 
 /**
  * Convert a Scratch 2.0 procedure string (e.g., "my_procedure %s %b %n")
@@ -26506,14 +26622,14 @@ module.exports = specMap;
  * JSON and then generates all needed scratch-vm runtime structures.
  */
 
-var vmPackage = __webpack_require__(157);
-var Blocks = __webpack_require__(12);
+var vmPackage = __webpack_require__(159);
+var Blocks = __webpack_require__(11);
 var Sprite = __webpack_require__(37);
-var Variable = __webpack_require__(20);
-var List = __webpack_require__(18);
+var Variable = __webpack_require__(21);
+var List = __webpack_require__(19);
 
-var loadCostume = __webpack_require__(21);
-var loadSound = __webpack_require__(22);
+var loadCostume = __webpack_require__(22);
+var loadSound = __webpack_require__(23);
 
 /**
  * Serializes the specified VM runtime.
@@ -26527,8 +26643,8 @@ var serialize = function serialize(runtime) {
         return target.isOriginal;
     });
     // obj.targets[0].messages = 'messages'
-    console.log('sb3--->runtime.targets', obj.targets[0]);
-    console.log('sb3--->json.targets', JSON.parse(JSON.stringify(obj.targets[0])));
+    // console.log('sb3--->runtime.targets',obj.targets[0]);
+    // console.log('sb3--->json.targets',JSON.parse(JSON.stringify(obj.targets[0])));
 
     // Assemble metadata
     var meta = Object.create(null);
@@ -26614,10 +26730,20 @@ var parseScratchObject = function parseScratchObject(object, runtime) {
     var target = sprite.createClone();
     // Load target properties from JSON.
     if (object.hasOwnProperty('variables')) {
-        for (var j = 0; j < object.variables.length; j++) {
-            var variable = object.variables[j];
-            target.variables[variable.name] = new Variable(variable.name, variable.value, variable.isPersistent);
+        // console.log(object.variables);
+        if (object.variables.length) {
+            for (var j = 0; j < object.variables.length; j++) {
+                var variable = object.variables[j];
+                target.variables[variable.name] = new Variable(variable.name, variable.value, variable.isPersistent);
+            }
+        } else {
+            for (key in object.variables) {
+                var _variable = object.variables[key];
+                target.variables[_variable.name] = new Variable(_variable.name, _variable.value, _variable.isPersistent);
+            }
         }
+        //
+        // console.log('target.variables:',target.variables);
     }
     if (object.hasOwnProperty('messages')) {
         for (var key in object.messages) {
@@ -26691,6 +26817,156 @@ module.exports = {
 "use strict";
 
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var log = __webpack_require__(4);
+var MathUtil = __webpack_require__(8);
+var RenderedTarget = __webpack_require__(13);
+
+/**
+ * Rendered target: instance of a sprite (clone), or the stage.
+ * @param {!Sprite} sprite Reference to the parent sprite.
+ * @param {Runtime} runtime Reference to the runtime.
+ * @constructor
+ */
+
+var PlugTarget = function (_RenderedTarget) {
+    _inherits(PlugTarget, _RenderedTarget);
+
+    function PlugTarget(sprite, runtime) {
+        _classCallCheck(this, PlugTarget);
+
+        var _this = _possibleConstructorReturn(this, (PlugTarget.__proto__ || Object.getPrototypeOf(PlugTarget)).call(this, sprite, runtime));
+
+        _this.isplug = true;
+        _this.isOriginal = false;
+        return _this;
+    }
+
+    /**
+     * Create a drawable with the this.renderer.
+     */
+
+
+    _createClass(PlugTarget, [{
+        key: 'initDrawable',
+        value: function initDrawable() {
+            if (this.renderer) {
+                this.drawableID = this.renderer.getEditTargetCenterPointDrawableId();
+            }
+        }
+    }, {
+        key: 'stopDrag',
+        value: function stopDrag() {
+            this.dragging = false;
+            this.runtime._editingTarget.setRotationCenter(this.x, this.y);
+            this.runtime._editingTarget.setPosition(this.x, this.y);
+        }
+
+        /**
+         * Serialize sprite info, used when emitting events about the sprite
+         * @returns {object} Sprite data as a simple object
+         */
+
+    }, {
+        key: 'toJSON',
+        value: function toJSON() {}
+    }]);
+
+    return PlugTarget;
+}(RenderedTarget);
+
+module.exports = PlugTarget;
+
+/***/ }),
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var PlugTarget = __webpack_require__(80);
+var RenderedTarget = __webpack_require__(13);
+// const Sprite = require('./Sprite');
+var Blocks = __webpack_require__(11);
+
+var SpritePlug = function () {
+    /**
+     * Sprite to be used on the Scratch stage.
+     * All clones of a sprite have shared blocks, shared costumes, shared variables.
+     * @param {?Blocks} blocks Shared blocks object for all clones of sprite.
+     * @param {Runtime} runtime Reference to the runtime.
+     * @constructor
+     */
+    function SpritePlug(runtime) {
+        _classCallCheck(this, SpritePlug);
+
+        this.runtime = runtime;
+
+        this.name = '';
+
+        this.costumes = [];
+        /**
+         * List of clones for this sprite, including the original.
+         * @type {Array.<!RenderedTarget>}
+         */
+        this.clones = [];
+    }
+
+    /**
+     * Create a clone of this sprite.
+     * @returns {!RenderedTarget} Newly created clone.
+     */
+
+
+    _createClass(SpritePlug, [{
+        key: 'createClone',
+        value: function createClone() {
+            var newClone = new PlugTarget(this, this.runtime);
+            newClone.isOriginal = true;
+            this.clones.push(newClone);
+            newClone.initDrawable();
+            return newClone;
+        }
+
+        /**
+         * Disconnect a clone from this sprite. The clone is unmodified.
+         * In particular, the clone's dispose() method is not called.
+         * @param {!RenderedTarget} clone - the clone to be removed.
+         */
+
+    }, {
+        key: 'removeClone',
+        value: function removeClone(clone) {
+            var cloneIndex = this.clones.indexOf(clone);
+            if (cloneIndex >= 0) {
+                this.clones.splice(cloneIndex, 1);
+            }
+        }
+    }]);
+
+    return SpritePlug;
+}();
+
+module.exports = SpritePlug;
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 /**
  * Escape a string to be safe to use in XML content.
  * CC-BY-SA: hgoebl
@@ -26719,7 +26995,7 @@ var xmlEscape = function xmlEscape(unsafe) {
 module.exports = xmlEscape;
 
 /***/ }),
-/* 81 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26735,17 +27011,17 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var EventEmitter = __webpack_require__(4);
-
-var log = __webpack_require__(7);
+var EventEmitter = __webpack_require__(5);
+// const Renderer = require('scratch-render');
+var log = __webpack_require__(4);
 var Runtime = __webpack_require__(70);
 var sb2 = __webpack_require__(77);
 var sb3 = __webpack_require__(79);
 var StringUtil = __webpack_require__(25);
-var uid = __webpack_require__(16);
+var uid = __webpack_require__(17);
 var Clone = __webpack_require__(24);
-var loadCostume = __webpack_require__(21);
-var loadSound = __webpack_require__(22);
+var loadCostume = __webpack_require__(22);
+var loadSound = __webpack_require__(23);
 
 var RESERVED_NAMES = ['_mouse_', '_stage_', '_edge_', '_myself_', '_random_'];
 
@@ -26870,17 +27146,15 @@ var VirtualMachine = function (_EventEmitter) {
     }, {
         key: 'clear',
         value: function clear() {
-            console.log('-----------vm--clear-----------');
             this.runtime.dispose();
+            this.runtime.renderer.reset();
             this.editingTarget = null;
             this.emitTargetsUpdate();
         }
     }, {
         key: 'newEmpty',
         value: function newEmpty() {
-            this.clear();
             this.loadProject(ProjectLoader.DEFAULT_PROJECT_DATA);
-            // this.addCostume();
         }
         /**
          * Get data for playground. Data comes back in an emitted event.
@@ -27016,7 +27290,9 @@ var VirtualMachine = function (_EventEmitter) {
             }
 
             return deserializer.deserialize(json, this.runtime).then(function (targets) {
-                _this2.clear();
+                // this.clear();
+                // console.log('-----targets------',targets)
+                // targets.splice(0,2);
                 for (var n = 0; n < targets.length; n++) {
                     if (targets[n] !== null) {
                         for (var i in targets[n].blocks._blocks) {
@@ -27415,7 +27691,11 @@ var VirtualMachine = function (_EventEmitter) {
                     // Ensure editing target is switched if we are deleting it.
                     if (clone === currentEditingTarget) {
                         var nextTargetIndex = Math.min(this.runtime.targets.length - 1, targetIndexBeforeDelete);
-                        this.setEditingTarget(this.runtime.targets[nextTargetIndex].id);
+                        if (this.runtime.targets.length > 0) {
+                            this.setEditingTarget(this.runtime.targets[nextTargetIndex].id);
+                        } else {
+                            this.editingTarget = null;
+                        }
                     }
                 }
                 // Sprite object should be deleted by GC.
@@ -27514,7 +27794,7 @@ var VirtualMachine = function (_EventEmitter) {
                 return;
             }
             var target = this.runtime.getTargetById(targetId);
-            if (target) {
+            if (target && !target.isplug) {
                 this.editingTarget = target;
                 // Emit appropriate UI updates.
                 this.emitTargetsUpdate();
@@ -27551,7 +27831,7 @@ var VirtualMachine = function (_EventEmitter) {
                 targetList: this.runtime.targets.filter(
                 // Don't report clones.
                 function (target) {
-                    return !target.hasOwnProperty('isOriginal') || target.isOriginal;
+                    return !!target || !target.hasOwnProperty('isOriginal') || target.isOriginal;
                 }).map(function (target) {
                     return target.toJSON();
                 }),
@@ -27570,11 +27850,15 @@ var VirtualMachine = function (_EventEmitter) {
         value: function emitWorkspaceUpdate() {
             // @todo Include variables scoped to editing target also.
             var stage = this.runtime.getTargetForStage();
-            var variableMap = Object.assign({}, this.runtime.getTargetForStage().variables, this.editingTarget.variables);
-
+            // const variableMap = Object.assign({},
+            //     this.runtime.getTargetForStage().variables,
+            //     this.editingTarget.variables
+            // );
+            var variableMap = Object.assign({}, this.runtime.getTargetForStage().variables);
             var variables = Object.keys(variableMap).map(function (k) {
                 return variableMap[k];
             });
+            // console.log('stage-variables',variables);
 
             var xmlString = '<xml xmlns="http://www.w3.org/1999/xhtml">\n                            <variables>\n                                ' + variables.map(function (v) {
                 return v.toXML();
@@ -27634,7 +27918,10 @@ var VirtualMachine = function (_EventEmitter) {
     }, {
         key: 'postSpriteInfo',
         value: function postSpriteInfo(data) {
-            this.editingTarget.postSpriteInfo(data);
+            if (!this.runtime.centerPointPlug.dragging) {
+                this.editingTarget.postSpriteInfo(data);
+            }
+            this.runtime.centerPointPlug.postSpriteInfo(data);
         }
 
         /**
@@ -27656,7 +27943,7 @@ var VirtualMachine = function (_EventEmitter) {
 module.exports = VirtualMachine;
 
 /***/ }),
-/* 82 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27777,7 +28064,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 83 */
+/* 85 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -27847,7 +28134,7 @@ module.exports = {
 
 
 /***/ }),
-/* 84 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27872,12 +28159,12 @@ module.exports = Error.captureStackTrace || function (error) {
 
 
 /***/ }),
-/* 85 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var captureStackTrace = __webpack_require__(84);
+var captureStackTrace = __webpack_require__(86);
 
 function inherits(ctor, superCtor) {
 	ctor.super_ = superCtor;
@@ -27923,14 +28210,14 @@ module.exports = function createErrorClass(className, setup) {
 
 
 /***/ }),
-/* 86 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
   Module dependencies
 */
-var ElementType = __webpack_require__(87);
-var entities = __webpack_require__(98);
+var ElementType = __webpack_require__(89);
+var entities = __webpack_require__(100);
 
 /*
   Boolean Attributes
@@ -28107,7 +28394,7 @@ function renderComment(elem) {
 
 
 /***/ }),
-/* 87 */
+/* 89 */
 /***/ (function(module, exports) {
 
 //Types of elements found in the DOM
@@ -28126,14 +28413,14 @@ module.exports = {
 };
 
 /***/ }),
-/* 88 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var ElementType = __webpack_require__(14);
+var ElementType = __webpack_require__(15);
 
 var re_whitespace = /\s+/g;
 var NodePrototype = __webpack_require__(38);
-var ElementPrototype = __webpack_require__(89);
+var ElementPrototype = __webpack_require__(91);
 
 function DomHandler(callback, options, elementCB){
 	if(typeof callback === "object"){
@@ -28349,7 +28636,7 @@ module.exports = DomHandler;
 
 
 /***/ }),
-/* 89 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // DOM-Level-1-compliant structure
@@ -28375,18 +28662,18 @@ Object.keys(domLvl1).forEach(function(key) {
 
 
 /***/ }),
-/* 90 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var DomUtils = module.exports;
 
 [
+	__webpack_require__(97),
+	__webpack_require__(98),
 	__webpack_require__(95),
 	__webpack_require__(96),
-	__webpack_require__(93),
 	__webpack_require__(94),
-	__webpack_require__(92),
-	__webpack_require__(91)
+	__webpack_require__(93)
 ].forEach(function(ext){
 	Object.keys(ext).forEach(function(key){
 		DomUtils[key] = ext[key].bind(DomUtils);
@@ -28395,7 +28682,7 @@ var DomUtils = module.exports;
 
 
 /***/ }),
-/* 91 */
+/* 93 */
 /***/ (function(module, exports) {
 
 // removeSubsets
@@ -28542,10 +28829,10 @@ exports.uniqueSort = function(nodes) {
 
 
 /***/ }),
-/* 92 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var ElementType = __webpack_require__(14);
+var ElementType = __webpack_require__(15);
 var isTag = exports.isTag = ElementType.isTag;
 
 exports.testElement = function(options, element){
@@ -28635,7 +28922,7 @@ exports.getElementsByTagType = function(type, element, recurse, limit){
 
 
 /***/ }),
-/* 93 */
+/* 95 */
 /***/ (function(module, exports) {
 
 exports.removeElement = function(elem){
@@ -28718,10 +29005,10 @@ exports.prepend = function(elem, prev){
 
 
 /***/ }),
-/* 94 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var isTag = __webpack_require__(14).isTag;
+var isTag = __webpack_require__(15).isTag;
 
 module.exports = {
 	filter: filter,
@@ -28823,11 +29110,11 @@ function findAll(test, rootElems){
 
 
 /***/ }),
-/* 95 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var ElementType = __webpack_require__(14),
-    getOuterHTML = __webpack_require__(86),
+var ElementType = __webpack_require__(15),
+    getOuterHTML = __webpack_require__(88),
     isTag = ElementType.isTag;
 
 module.exports = {
@@ -28852,7 +29139,7 @@ function getText(elem){
 
 
 /***/ }),
-/* 96 */
+/* 98 */
 /***/ (function(module, exports) {
 
 var getChildren = exports.getChildren = function(elem){
@@ -28882,13 +29169,13 @@ exports.getName = function(elem){
 
 
 /***/ }),
-/* 97 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var stream = __webpack_require__(6);
+var stream = __webpack_require__(7);
 
 function DuplexWrapper(options, writable, readable) {
   if (typeof readable === "undefined") {
@@ -28965,11 +29252,11 @@ module.exports.DuplexWrapper = DuplexWrapper;
 
 
 /***/ }),
-/* 98 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var encode = __webpack_require__(100),
-    decode = __webpack_require__(99);
+var encode = __webpack_require__(102),
+    decode = __webpack_require__(101);
 
 exports.decode = function(data, level){
 	return (!level || level <= 0 ? decode.XML : decode.HTML)(data);
@@ -29004,7 +29291,7 @@ exports.escape = encode.escape;
 
 
 /***/ }),
-/* 99 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var entityMap = __webpack_require__(27),
@@ -29081,7 +29368,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 100 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var inverseXML = getInverseObj(__webpack_require__(28)),
@@ -29160,7 +29447,7 @@ exports.escape = escapeXML;
 
 
 /***/ }),
-/* 101 */
+/* 103 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -29195,14 +29482,14 @@ module.exports = {
 };
 
 /***/ }),
-/* 102 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var util = __webpack_require__(53);
-var isArrayish = __webpack_require__(111);
+var isArrayish = __webpack_require__(113);
 
 var errorEx = function errorEx(name, properties) {
 	if (!name || name.constructor !== String) {
@@ -29335,33 +29622,33 @@ module.exports = errorEx;
 
 
 /***/ }),
-/* 103 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(setImmediate, Buffer) {
 
-var EventEmitter = __webpack_require__(4).EventEmitter;
+var EventEmitter = __webpack_require__(5).EventEmitter;
 var http = __webpack_require__(51);
-var https = __webpack_require__(109);
+var https = __webpack_require__(111);
 var urlLib = __webpack_require__(35);
 var querystring = __webpack_require__(31);
-var objectAssign = __webpack_require__(127);
-var PassThrough = __webpack_require__(6).PassThrough;
-var duplexer2 = __webpack_require__(97);
-var isStream = __webpack_require__(114);
-var readAllStream = __webpack_require__(136);
-var timedOut = __webpack_require__(148);
-var urlParseLax = __webpack_require__(150);
-var lowercaseKeys = __webpack_require__(115);
-var isRedirect = __webpack_require__(112);
+var objectAssign = __webpack_require__(129);
+var PassThrough = __webpack_require__(7).PassThrough;
+var duplexer2 = __webpack_require__(99);
+var isStream = __webpack_require__(116);
+var readAllStream = __webpack_require__(138);
+var timedOut = __webpack_require__(150);
+var urlParseLax = __webpack_require__(152);
+var lowercaseKeys = __webpack_require__(117);
+var isRedirect = __webpack_require__(114);
 var PinkiePromise = __webpack_require__(46);
-var unzipResponse = __webpack_require__(158);
-var createErrorClass = __webpack_require__(85);
-var nodeStatusCodes = __webpack_require__(126);
-var parseJson = __webpack_require__(128);
-var isRetryAllowed = __webpack_require__(113);
-var pkg = __webpack_require__(104);
+var unzipResponse = __webpack_require__(160);
+var createErrorClass = __webpack_require__(87);
+var nodeStatusCodes = __webpack_require__(128);
+var parseJson = __webpack_require__(130);
+var isRetryAllowed = __webpack_require__(115);
+var pkg = __webpack_require__(106);
 
 function requestAsEventEmitter(opts) {
 	opts = opts || {};
@@ -29744,7 +30031,7 @@ module.exports = got;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(34).setImmediate, __webpack_require__(3).Buffer))
 
 /***/ }),
-/* 104 */
+/* 106 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -29866,7 +30153,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 105 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = CollectingHandler;
@@ -29876,7 +30163,7 @@ function CollectingHandler(cbs){
 	this.events = [];
 }
 
-var EVENTS = __webpack_require__(11).EVENTS;
+var EVENTS = __webpack_require__(12).EVENTS;
 Object.keys(EVENTS).forEach(function(name){
 	if(EVENTS[name] === 0){
 		name = "on" + name;
@@ -29927,10 +30214,10 @@ CollectingHandler.prototype.restart = function(){
 
 
 /***/ }),
-/* 106 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var index = __webpack_require__(11),
+var index = __webpack_require__(12),
     DomHandler = index.DomHandler,
     DomUtils = index.DomUtils;
 
@@ -30028,7 +30315,7 @@ module.exports = FeedHandler;
 
 
 /***/ }),
-/* 107 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = ProxyHandler;
@@ -30037,7 +30324,7 @@ function ProxyHandler(cbs){
 	this._cbs = cbs || {};
 }
 
-var EVENTS = __webpack_require__(11).EVENTS;
+var EVENTS = __webpack_require__(12).EVENTS;
 Object.keys(EVENTS).forEach(function(name){
 	if(EVENTS[name] === 0){
 		name = "on" + name;
@@ -30060,7 +30347,7 @@ Object.keys(EVENTS).forEach(function(name){
 });
 
 /***/ }),
-/* 108 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = Stream;
@@ -30079,7 +30366,7 @@ function Cbs(scope){
 	this.scope = scope;
 }
 
-var EVENTS = __webpack_require__(11).EVENTS;
+var EVENTS = __webpack_require__(12).EVENTS;
 
 Object.keys(EVENTS).forEach(function(name){
 	if(EVENTS[name] === 0){
@@ -30100,7 +30387,7 @@ Object.keys(EVENTS).forEach(function(name){
 });
 
 /***/ }),
-/* 109 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var http = __webpack_require__(51);
@@ -30120,7 +30407,7 @@ https.request = function (params, cb) {
 
 
 /***/ }),
-/* 110 */
+/* 112 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -30210,7 +30497,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 111 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30227,7 +30514,7 @@ module.exports = function isArrayish(obj) {
 
 
 /***/ }),
-/* 112 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30248,7 +30535,7 @@ module.exports = function (x) {
 
 
 /***/ }),
-/* 113 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30315,7 +30602,7 @@ module.exports = function (err) {
 
 
 /***/ }),
-/* 114 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30343,7 +30630,7 @@ isStream.transform = function (stream) {
 
 
 /***/ }),
-/* 115 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30361,7 +30648,7 @@ module.exports = function (obj) {
 
 
 /***/ }),
-/* 116 */
+/* 118 */
 /***/ (function(module, exports) {
 
 function M() { this._events = {}; }
@@ -30417,11 +30704,11 @@ module.exports = M;
 
 
 /***/ }),
-/* 117 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // default filter
-var Transform = __webpack_require__(5);
+var Transform = __webpack_require__(6);
 
 var levelMap = { debug: 1, info: 2, warn: 3, error: 4 };
 
@@ -30479,11 +30766,11 @@ module.exports = Filter;
 
 
 /***/ }),
-/* 118 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Transform = __webpack_require__(5),
-    Filter = __webpack_require__(117);
+var Transform = __webpack_require__(6),
+    Filter = __webpack_require__(119);
 
 var log = new Transform(),
     slice = Array.prototype.slice;
@@ -30530,10 +30817,10 @@ exports.enable = function() {
 
 
 /***/ }),
-/* 119 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Transform = __webpack_require__(5),
+var Transform = __webpack_require__(6),
     cache = [ ];
 
 var logger = new Transform();
@@ -30550,10 +30837,10 @@ module.exports = logger;
 
 
 /***/ }),
-/* 120 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Transform = __webpack_require__(5);
+var Transform = __webpack_require__(6);
 
 var newlines = /\n+$/,
     logger = new Transform();
@@ -30581,17 +30868,17 @@ logger.write = function(name, level, args) {
 };
 
 logger.formatters = ['color', 'minilog'];
-logger.color = __webpack_require__(121);
-logger.minilog = __webpack_require__(122);
+logger.color = __webpack_require__(123);
+logger.minilog = __webpack_require__(124);
 
 module.exports = logger;
 
 
 /***/ }),
-/* 121 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Transform = __webpack_require__(5),
+var Transform = __webpack_require__(6),
     color = __webpack_require__(45);
 
 var colors = { debug: ['cyan'], info: ['purple' ], warn: [ 'yellow', true ], error: [ 'red', true ] },
@@ -30612,10 +30899,10 @@ module.exports = logger;
 
 
 /***/ }),
-/* 122 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Transform = __webpack_require__(5),
+var Transform = __webpack_require__(6),
     color = __webpack_require__(45),
     colors = { debug: ['gray'], info: ['purple' ], warn: [ 'yellow', true ], error: [ 'red', true ] },
     logger = new Transform();
@@ -30644,15 +30931,15 @@ module.exports = logger;
 
 
 /***/ }),
-/* 123 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Minilog = __webpack_require__(118);
+var Minilog = __webpack_require__(120);
 
 var oldEnable = Minilog.enable,
     oldDisable = Minilog.disable,
     isChrome = (typeof navigator != 'undefined' && /chrome/i.test(navigator.userAgent)),
-    console = __webpack_require__(120);
+    console = __webpack_require__(122);
 
 // Use a more capable logging backend if on Chrome
 Minilog.defaultBackend = (isChrome ? console.minilog : console);
@@ -30684,18 +30971,18 @@ Minilog.disable = function() {
 exports = module.exports = Minilog;
 
 exports.backends = {
-  array: __webpack_require__(119),
+  array: __webpack_require__(121),
   browser: Minilog.defaultBackend,
-  localStorage: __webpack_require__(125),
-  jQuery: __webpack_require__(124)
+  localStorage: __webpack_require__(127),
+  jQuery: __webpack_require__(126)
 };
 
 
 /***/ }),
-/* 124 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Transform = __webpack_require__(5);
+var Transform = __webpack_require__(6);
 
 var cid = new Date().valueOf().toString(36);
 
@@ -30772,10 +31059,10 @@ module.exports = AjaxLogger;
 
 
 /***/ }),
-/* 125 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Transform = __webpack_require__(5),
+var Transform = __webpack_require__(6),
     cache = false;
 
 var logger = new Transform();
@@ -30792,7 +31079,7 @@ logger.write = function(name, level, args) {
 module.exports = logger;
 
 /***/ }),
-/* 126 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30861,7 +31148,7 @@ module.exports = {
 
 
 /***/ }),
-/* 127 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30958,13 +31245,13 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 
 /***/ }),
-/* 128 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var errorEx = __webpack_require__(102);
-var fallback = __webpack_require__(129);
+var errorEx = __webpack_require__(104);
+var fallback = __webpack_require__(131);
 
 var JSONError = errorEx('JSONError', {
 	fileName: errorEx.append('in %s')
@@ -31000,7 +31287,7 @@ module.exports = function (x, reviver, filename) {
 
 
 /***/ }),
-/* 129 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -31011,7 +31298,7 @@ module.exports = function (x, reviver, filename) {
 
 // RTFM: http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-262.pdf
 
-var Uni = __webpack_require__(130)
+var Uni = __webpack_require__(132)
 
 function isHexDigit(x) {
   return (x >= '0' && x <= '9')
@@ -31758,7 +32045,7 @@ module.exports.tokenize = function tokenizeJSON(input, options) {
 
 
 /***/ }),
-/* 130 */
+/* 132 */
 /***/ (function(module, exports) {
 
 
@@ -31835,7 +32122,7 @@ module.exports.NonAsciiIdentifierPart = /[\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u0
 
 
 /***/ }),
-/* 131 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32135,7 +32422,7 @@ module.exports = Promise;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(34).setImmediate))
 
 /***/ }),
-/* 132 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32156,7 +32443,7 @@ module.exports = function (url) {
 
 
 /***/ }),
-/* 133 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.4.1 by @mathias */
@@ -32692,10 +32979,10 @@ module.exports = function (url) {
 
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(155)(module), __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(157)(module), __webpack_require__(0)))
 
 /***/ }),
-/* 134 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32786,7 +33073,7 @@ var isArray = Array.isArray || function (xs) {
 
 
 /***/ }),
-/* 135 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32878,13 +33165,13 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 136 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 
-var Writable = __webpack_require__(6).Writable;
+var Writable = __webpack_require__(7).Writable;
 var inherits = __webpack_require__(53).inherits;
 var Promise = __webpack_require__(46);
 
@@ -32958,14 +33245,14 @@ module.exports = function read(stream, options, cb) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3).Buffer))
 
 /***/ }),
-/* 137 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(9);
+module.exports = __webpack_require__(10);
 
 
 /***/ }),
-/* 138 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33001,7 +33288,7 @@ module.exports = PassThrough;
 var Transform = __webpack_require__(48);
 
 /*<replacement>*/
-var util = __webpack_require__(13);
+var util = __webpack_require__(14);
 util.inherits = __webpack_require__(1);
 /*</replacement>*/
 
@@ -33018,7 +33305,7 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 };
 
 /***/ }),
-/* 139 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33098,28 +33385,28 @@ module.exports = function () {
 }();
 
 /***/ }),
-/* 140 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(6).PassThrough
-
-
-/***/ }),
-/* 141 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(6).Transform
-
-
-/***/ }),
 /* 142 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(7).PassThrough
+
+
+/***/ }),
+/* 143 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(7).Transform
+
+
+/***/ }),
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(32);
 
 
 /***/ }),
-/* 143 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -33309,10 +33596,10 @@ module.exports = __webpack_require__(32);
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(9)))
 
 /***/ }),
-/* 144 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -41518,7 +41805,7 @@ return /******/ (function(modules) { // webpackBootstrap
 //# sourceMappingURL=socket.io.js.map
 
 /***/ }),
-/* 145 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -41544,15 +41831,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 module.exports = Stream;
 
-var EE = __webpack_require__(4).EventEmitter;
+var EE = __webpack_require__(5).EventEmitter;
 var inherits = __webpack_require__(1);
 
 inherits(Stream, EE);
-Stream.Readable = __webpack_require__(6);
-Stream.Writable = __webpack_require__(142);
-Stream.Duplex = __webpack_require__(137);
-Stream.Transform = __webpack_require__(141);
-Stream.PassThrough = __webpack_require__(140);
+Stream.Readable = __webpack_require__(7);
+Stream.Writable = __webpack_require__(144);
+Stream.Duplex = __webpack_require__(139);
+Stream.Transform = __webpack_require__(143);
+Stream.PassThrough = __webpack_require__(142);
 
 // Backwards-compat with node 0.4.x
 Stream.Stream = Stream;
@@ -41651,14 +41938,14 @@ Stream.prototype.pipe = function(dest, options) {
 
 
 /***/ }),
-/* 146 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer, global, process) {var capability = __webpack_require__(52)
 var inherits = __webpack_require__(1)
-var response = __webpack_require__(147)
-var stream = __webpack_require__(6)
-var toArrayBuffer = __webpack_require__(149)
+var response = __webpack_require__(149)
+var stream = __webpack_require__(7)
+var toArrayBuffer = __webpack_require__(151)
 
 var IncomingMessage = response.IncomingMessage
 var rStates = response.readyStates
@@ -41961,15 +42248,15 @@ var unsafeHeaders = [
 	'via'
 ]
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3).Buffer, __webpack_require__(0), __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3).Buffer, __webpack_require__(0), __webpack_require__(9)))
 
 /***/ }),
-/* 147 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process, Buffer, global) {var capability = __webpack_require__(52)
 var inherits = __webpack_require__(1)
-var stream = __webpack_require__(6)
+var stream = __webpack_require__(7)
 
 var rStates = exports.readyStates = {
 	UNSENT: 0,
@@ -42150,10 +42437,10 @@ IncomingMessage.prototype._onXHRProgress = function () {
 	}
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8), __webpack_require__(3).Buffer, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(3).Buffer, __webpack_require__(0)))
 
 /***/ }),
-/* 148 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42215,7 +42502,7 @@ module.exports = function (req, time) {
 
 
 /***/ }),
-/* 149 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Buffer = __webpack_require__(3).Buffer
@@ -42248,13 +42535,13 @@ module.exports = function (buf) {
 
 
 /***/ }),
-/* 150 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 var url = __webpack_require__(35);
-var prependHttp = __webpack_require__(132);
+var prependHttp = __webpack_require__(134);
 
 module.exports = function (x) {
 	var withProtocol = prependHttp(x);
@@ -42269,7 +42556,7 @@ module.exports = function (x) {
 
 
 /***/ }),
-/* 151 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42292,7 +42579,7 @@ module.exports = {
 
 
 /***/ }),
-/* 152 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -42366,7 +42653,7 @@ function config (name) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 153 */
+/* 155 */
 /***/ (function(module, exports) {
 
 if (typeof Object.create === 'function') {
@@ -42395,7 +42682,7 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 154 */
+/* 156 */
 /***/ (function(module, exports) {
 
 module.exports = function isBuffer(arg) {
@@ -42406,7 +42693,7 @@ module.exports = function isBuffer(arg) {
 }
 
 /***/ }),
-/* 155 */
+/* 157 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -42434,7 +42721,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 156 */
+/* 158 */
 /***/ (function(module, exports) {
 
 module.exports = extend
@@ -42459,7 +42746,7 @@ function extend() {
 
 
 /***/ }),
-/* 157 */
+/* 159 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -42552,19 +42839,19 @@ module.exports = {
 };
 
 /***/ }),
-/* 158 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
-/* 159 */
-/***/ (function(module, exports) {
-
-/* (ignored) */
-
-/***/ }),
 /* 160 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 161 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 162 */
 /***/ (function(module, exports) {
 
 /* (ignored) */

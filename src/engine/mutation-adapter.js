@@ -28,7 +28,7 @@ const mutatorTagToObject = function (dom) {
  * @return {object} Object representing the mutation.
  */
 const mutationAdpater = function (mutation) {
-    console.log(mutation);
+    // console.log(mutation);
     let mutationParsed;
     // Check if the mutation is already parsed; if not, parse it.
     if (typeof mutation === 'object') {

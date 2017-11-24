@@ -12,6 +12,7 @@ class Variable {
      */
     constructor (name, value, isCloud) {
         this.name = name;
+        // this.id = name;
         this.value = value;
         this.isCloud = isCloud;
     }

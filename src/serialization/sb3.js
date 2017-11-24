@@ -23,8 +23,8 @@ const serialize = function (runtime) {
     const obj = Object.create(null);
     obj.targets = runtime.targets.filter(target => target.isOriginal);
     // obj.targets[0].messages = 'messages'
-    console.log('sb3--->runtime.targets',obj.targets[0]);
-    console.log('sb3--->json.targets',JSON.parse(JSON.stringify(obj.targets[0])));
+    // console.log('sb3--->runtime.targets',obj.targets[0]);
+    // console.log('sb3--->json.targets',JSON.parse(JSON.stringify(obj.targets[0])));
 
     // Assemble metadata
     const meta = Object.create(null);
@@ -112,14 +112,28 @@ const parseScratchObject = function (object, runtime) {
     const target = sprite.createClone();
     // Load target properties from JSON.
     if (object.hasOwnProperty('variables')) {
-        for (let j = 0; j < object.variables.length; j++) {
-            const variable = object.variables[j];
-            target.variables[variable.name] = new Variable(
-                variable.name,
-                variable.value,
-                variable.isPersistent
-            );
+        // console.log(object.variables);
+        if(object.variables.length){
+            for (let j = 0; j < object.variables.length; j++) {
+                const variable = object.variables[j];
+                target.variables[variable.name] = new Variable(
+                    variable.name,
+                    variable.value,
+                    variable.isPersistent
+                );
+            }
+        }else{
+            for (key in object.variables) {
+                const variable = object.variables[key];
+                target.variables[variable.name] = new Variable(
+                    variable.name,
+                    variable.value,
+                    variable.isPersistent
+                );
+            }
         }
+        //
+        // console.log('target.variables:',target.variables);
     }
     if (object.hasOwnProperty('messages')) {
         for(var key in object.messages){
